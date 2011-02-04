@@ -1,0 +1,10 @@
+glob:bin/
+glob:obj/
+glob:_ReSharper.SharpSerializer
+glob:*ReSharper*
+glob:SharpSerializer.Library.Silverlight/Bin/
+glob:*.suo
+glob:TestResults/
+glob:*.vsmdi
+glob:LocalTestRun.testrunconfig
+glob:*.user
