@@ -154,12 +154,8 @@ namespace Polenter.Serialization.Serializing
         {
             var property = new DictionaryProperty(name, info.Type);
 
-            Type[] arguments = info.Type.GetGenericArguments();
-            if (arguments.Length > 0)
-            {
-                property.KeyType = arguments[0];
-                property.ValueType = arguments[1];
-            }
+            property.KeyType = info.KeyType;
+            property.ValueType = info.ElementType;
 
             // Items
             var dictionary = (IDictionary) value;

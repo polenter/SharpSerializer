@@ -167,7 +167,7 @@ namespace Polenter.Serialization.Advanced
         private void parseCollectionProperty(CollectionProperty property)
         {
             // ElementType
-            property.ElementType = _reader.GetAttributeAsType(Attributes.ElementType);
+            property.ElementType = property.Type != null ? Polenter.Serialization.Serializing.TypeInfo.GetTypeInfo(property.Type).ElementType : null;
 
             foreach (string subElement in _reader.ReadSubElements())
             {
@@ -188,8 +188,12 @@ namespace Polenter.Serialization.Advanced
 
         private void parseDictionaryProperty(DictionaryProperty property)
         {
-            property.KeyType = _reader.GetAttributeAsType(Attributes.KeyType);
-            property.ValueType = _reader.GetAttributeAsType(Attributes.ValueType);
+            if (property.Type!=null)
+            {
+                var typeInfo = Polenter.Serialization.Serializing.TypeInfo.GetTypeInfo(property.Type);
+                property.KeyType = typeInfo.KeyType;
+                property.ValueType = typeInfo.ElementType;
+            }
 
             foreach (string subElement in _reader.ReadSubElements())
             {
@@ -252,7 +256,7 @@ namespace Polenter.Serialization.Advanced
 
         private void parseMultiDimensionalArrayProperty(MultiDimensionalArrayProperty property)
         {
-            property.ElementType = _reader.GetAttributeAsType(Attributes.ElementType);
+            property.ElementType = property.Type != null ? Polenter.Serialization.Serializing.TypeInfo.GetTypeInfo(property.Type).ElementType : null;
 
             foreach (string subElement in _reader.ReadSubElements())
             {
@@ -317,7 +321,7 @@ namespace Polenter.Serialization.Advanced
         private void parseSingleDimensionalArrayProperty(SingleDimensionalArrayProperty property)
         {
             // ElementType
-            property.ElementType = _reader.GetAttributeAsType(Attributes.ElementType);
+            property.ElementType = property.Type != null ? Polenter.Serialization.Serializing.TypeInfo.GetTypeInfo(property.Type).ElementType : null;
 
             // LowerBound
             property.LowerBound = _reader.GetAttributeAsInt(Attributes.LowerBound);

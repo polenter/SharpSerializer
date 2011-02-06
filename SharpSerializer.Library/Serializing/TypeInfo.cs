@@ -144,23 +144,15 @@ namespace Polenter.Serialization.Serializing
                                 // Sure it is a Collection, but maybe Dictionary also?
                                 typeInfo.IsDictionary = Tools.IsDictionary(type);
 
-                                // Fill its Arguments, if the listing is generic
-                                if (type.IsGenericType)
+                                // Fill its key and value types, if the listing is generic
+                                bool elementTypeDefinitionFound;
+                                var examinedType = type;
+                                do
                                 {
-                                    Type[] arguments = type.GetGenericArguments();
-
-                                    if (typeInfo.IsDictionary)
-                                    {
-                                        // in Dictionary there are keys and values
-                                        typeInfo.KeyType = arguments[0];
-                                        typeInfo.ElementType = arguments[1];
-                                    }
-                                    else
-                                    {
-                                        // In Collection there are only items
-                                        typeInfo.ElementType = arguments[0];
-                                    }
-                                }
+                                    elementTypeDefinitionFound = fillKeyAndElementType(typeInfo, examinedType);
+                                    examinedType = examinedType.BaseType;
+                                    // until key and element definition was found, or the base typ is an object
+                                } while (!elementTypeDefinitionFound && examinedType!=null && examinedType!=typeof(object));
                             }
                         }
                     }
@@ -170,6 +162,34 @@ namespace Polenter.Serialization.Serializing
             }
 
             return typeInfo;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="typeInfo"></param>
+        /// <param name="type"></param>
+        /// <returns>true if the key and value definition was found</returns>
+        private static bool fillKeyAndElementType(TypeInfo typeInfo, Type type)
+        {
+            if (type.IsGenericType)
+            {
+                Type[] arguments = type.GetGenericArguments();
+
+                if (typeInfo.IsDictionary)
+                {
+                    // in Dictionary there are keys and values
+                    typeInfo.KeyType = arguments[0];
+                    typeInfo.ElementType = arguments[1];
+                }
+                else
+                {
+                    // In Collection there are only items
+                    typeInfo.ElementType = arguments[0];
+                }
+                return arguments.Length > 0;
+            }
+            return false;
         }
     }
 
