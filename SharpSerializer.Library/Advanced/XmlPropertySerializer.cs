@@ -111,9 +111,6 @@ namespace Polenter.Serialization.Advanced
         {
             writeStartProperty(Elements.MultiArray, property.Name, property.ValueType);
 
-            // ElementType
-            writeElementType(property.Property.ElementType);
-
             // DimensionInfos
             writeDimensionInfos(property.Property.DimensionInfos);
 
@@ -165,9 +162,6 @@ namespace Polenter.Serialization.Advanced
         {
             writeStartProperty(Elements.SingleArray, property.Name, property.ValueType);
 
-            // ElementType
-            writeElementType(property.Property.ElementType);
-
             // LowerBound
             if (property.Property.LowerBound != 0)
             {
@@ -195,14 +189,6 @@ namespace Polenter.Serialization.Advanced
             _writer.WriteEndElement();
         }
 
-        private void writeElementType(Type type)
-        {
-            if (type != null)
-            {
-                _writer.WriteAttribute(Attributes.ElementType, type);
-            }
-        }
-
         /// <summary>
         /// </summary>
         /// <param name = "property"></param>
@@ -210,9 +196,6 @@ namespace Polenter.Serialization.Advanced
         {
             writeStartProperty(Elements.Dictionary, property.Name, property.ValueType);
 
-            // Key und Value types
-            writeKeyType(property.Property.KeyType);
-            writeValueType(property.Property.ValueType);
 
             // Properties
             writeProperties(property.Property.Properties, property.Property.Type);
@@ -263,9 +246,6 @@ namespace Polenter.Serialization.Advanced
         protected override void SerializeCollectionProperty(PropertyTypeInfo<CollectionProperty> property)
         {
             writeStartProperty(Elements.Collection, property.Name, property.ValueType);
-
-            // ElementType
-            writeElementType(property.Property.ElementType);
 
             // Properties
             writeProperties(property.Property.Properties, property.Property.Type);
