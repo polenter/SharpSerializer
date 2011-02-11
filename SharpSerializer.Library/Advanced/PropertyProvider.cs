@@ -42,7 +42,8 @@ namespace Polenter.Serialization.Advanced
     public class PropertyProvider
     {
         private PropertiesToIgnore _propertiesToIgnore;
-        private static Dictionary<Type, IList<PropertyInfo>> _cache = new Dictionary<Type, IList<PropertyInfo>>();
+        private IList<Type> _attributesToIgnore;
+        private static readonly Dictionary<Type, IList<PropertyInfo>> _cache = new Dictionary<Type, IList<PropertyInfo>>();
 
         /// <summary>
         ///   Which properties should be ignored
@@ -64,6 +65,19 @@ namespace Polenter.Serialization.Advanced
                 return _propertiesToIgnore;
             }
             set { _propertiesToIgnore = value; }
+        }
+
+        /// <summary>
+        /// All Properties markt with one of the contained attribute-types will be ignored on save.
+        /// </summary>
+        public IList<Type> AttributesToIgnore
+        {
+            get
+            {
+                if (_attributesToIgnore==null)_attributesToIgnore=new List<Type>();
+                return _attributesToIgnore;
+            }
+            set { _attributesToIgnore = value; }
         }
 
         /// <summary>
@@ -140,13 +154,21 @@ namespace Polenter.Serialization.Advanced
         }
 
         /// <summary>
+        /// Determines whether <paramref name="property"/> is excluded from serialization or not.
         /// </summary>
-        /// <param name = "property"></param>
-        /// <returns></returns>
-        protected static bool ContainsExcludeFromSerializationAttribute(ICustomAttributeProvider property)
+        /// <param name="property">The property to be checked.</param>
+        /// <returns>
+        /// 	<c>true</c> if no serialization
+        /// </returns>
+        protected bool ContainsExcludeFromSerializationAttribute(ICustomAttributeProvider property)
         {
-            object[] attributes = property.GetCustomAttributes(typeof (ExcludeFromSerializationAttribute), false);
-            return attributes.Length > 0;
+            foreach (Type attrType in AttributesToIgnore)
+            {
+                object[] attributes = property.GetCustomAttributes(attrType, false);
+                if (attributes.Length > 0) 
+                    return true;
+            }
+            return false;
         }
 
         /// <summary>

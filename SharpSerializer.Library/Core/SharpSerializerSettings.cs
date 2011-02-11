@@ -30,6 +30,8 @@ using System.Xml;
 using Polenter.Serialization.Advanced;
 using Polenter.Serialization.Advanced.Serializing;
 using Polenter.Serialization.Advanced.Xml;
+using System.Collections.Generic;
+using System;
 
 namespace Polenter.Serialization.Core
 {
@@ -93,11 +95,13 @@ namespace Polenter.Serialization.Core
     public class AdvancedSharpSerializerSettings
     {
         private PropertiesToIgnore _propertiesToIgnore;
+        private IList<Type> _attributesToIgnore;
 
         ///<summary>
         ///</summary>
         public AdvancedSharpSerializerSettings()
         {
+            AttributesToIgnore.Add(typeof(ExcludeFromSerializationAttribute));
             RootName = "Root";
         }
 
@@ -118,6 +122,22 @@ namespace Polenter.Serialization.Core
                 return _propertiesToIgnore;
             }
             set { _propertiesToIgnore = value; }
+        }
+
+        /// <summary>
+        /// All Properties marked with one of the contained attribute-types will be ignored on save.
+		/// As default, this list contains only ExcludeFromSerializationAttribute.
+		/// For performance reasons it would be better to clear this list if this attribute 
+		/// is not used in serialized classes.
+        /// </summary>
+        public IList<Type> AttributesToIgnore
+        {
+            get
+            {
+                if (_attributesToIgnore == null) _attributesToIgnore = new List<Type>(); 
+                return _attributesToIgnore;
+            }
+            set { _attributesToIgnore = value; }
         }
 
         /// <summary>
