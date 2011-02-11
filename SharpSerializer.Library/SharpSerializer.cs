@@ -147,6 +147,7 @@ namespace Polenter.Serialization
         {
             // PropertiesToIgnore
             PropertyProvider.PropertiesToIgnore = settings.AdvancedSettings.PropertiesToIgnore;
+            PropertyProvider.AttributesToIgnore = settings.AdvancedSettings.AttributesToIgnore;
             //RootName
             RootName = settings.AdvancedSettings.RootName;
             // SimpleValueConverter
@@ -176,6 +177,8 @@ namespace Polenter.Serialization
         {
             // PropertiesToIgnore
             PropertyProvider.PropertiesToIgnore = settings.AdvancedSettings.PropertiesToIgnore;
+            PropertyProvider.AttributesToIgnore = settings.AdvancedSettings.AttributesToIgnore;
+
             //RootName
             RootName = settings.AdvancedSettings.RootName;
 
