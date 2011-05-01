@@ -61,6 +61,11 @@ namespace Polenter.Serialization.Core
                 // new since the version 2
                 return true;
             }
+            if (type == typeof(Guid))
+            {
+                // new since the version 2.8
+                return true;
+            }
             if (type.IsEnum)
             {
                 return true;

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Xml;
@@ -9,41 +6,46 @@ using System.Xml;
 namespace Polenter.Serialization
 {
     /// <summary>
-    ///   All labeled with that Attribute object properties are ignored during the serialization. See PropertyProvider
+    ///   All labeled with that Attribute object properties are ignored during the serialization. 
+    ///   See PropertyProvider
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
     public sealed class MyExcludeAttribute : Attribute
     {
     }
 
-    public class Class2BeSerialized
-    {
-        public string Name {get;set;}
-
-        public string NameRule { get; set; }
-
-        [Polenter.Serialization.ExcludeFromSerialization]
-        public string NameSystemAttribute { get; set; }
-
-        [MyExcludeAttribute]
-        public string NamePrivateAttribute { get; set; }
-
-        public virtual Class2BeSerialized Complex { get; set; }
-
-        public virtual Class2BeSerialized ComplexRule { get; set; }
-
-        [Polenter.Serialization.ExcludeFromSerialization]
-        public virtual Class2BeSerialized ComplexSystemAttribute { get; set; }
-
-        [MyExcludeAttribute]
-        public virtual Class2BeSerialized ComplexPrivateAttribute { get; set; }
-    }
-
     [TestClass]
-    public class IgnoredAttributeTests
+    public class SerializationTests
     {
+        #region XmlSerial_IgnoredAttributesShouldNotBeSerialized with helpers
+        /// <summary>
+        /// Local testclass to be serialized
+        /// </summary>
+        public class Class2BeSerialized
+        {
+            public string Name { get; set; }
+
+            public string NameRule { get; set; }
+
+            [Polenter.Serialization.ExcludeFromSerialization]
+            public string NameSystemAttribute { get; set; }
+
+            [MyExcludeAttribute]
+            public string NamePrivateAttribute { get; set; }
+
+            public virtual Class2BeSerialized Complex { get; set; }
+
+            public virtual Class2BeSerialized ComplexRule { get; set; }
+
+            [Polenter.Serialization.ExcludeFromSerialization]
+            public virtual Class2BeSerialized ComplexSystemAttribute { get; set; }
+
+            [MyExcludeAttribute]
+            public virtual Class2BeSerialized ComplexPrivateAttribute { get; set; }
+        }
+
         [TestMethod]
-        public void SerializeAsXml()
+        public void XmlSerial_IgnoredAttributesShouldNotBeSerialized()
         {
             var child = new Class2BeSerialized()
             {
@@ -63,7 +65,7 @@ namespace Polenter.Serialization
             };
 
             /*
-<Complex name="Root" type="Polenter.Serialization.Class2BeSerialized, SharpSerializer.Tests">
+<Complex name="Root" type="Polenter.Serialization.IgnoredAttributeTests+Class2BeSerialized, SharpSerializer.Tests">
   <Properties>
     <Simple name="Name" value="MyName" />
     <Complex name="Complex">
@@ -114,5 +116,64 @@ namespace Polenter.Serialization
 
             return doc;
         }
+        #endregion
+
+        #region Serial_Guid with helpers
+        /// <summary>
+        /// Local testclass to be serialized
+        /// </summary>
+        public class ClassWithGuid
+        {
+            public Guid Guid { get; set; }
+        }
+
+        [TestMethod]
+        public void XmlSerial_ShouldSerializeGuid()
+        {
+            var parent = new ClassWithGuid()
+            {
+                Guid = Guid.NewGuid(),
+            };
+
+            var stream = new MemoryStream();
+            var settings = new SharpSerializerXmlSettings();
+            var serializer = new SharpSerializer(settings);
+
+            serializer.Serialize(parent, stream);
+
+            stream.Position = 0;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(stream);
+            System.Console.WriteLine(doc.InnerXml);
+
+            serializer = new SharpSerializer(settings);
+            stream.Position = 0;
+            ClassWithGuid loaded = serializer.Deserialize(stream) as ClassWithGuid;
+
+            Assert.AreEqual(parent.Guid, loaded.Guid, "same guid");
+        }
+
+        [TestMethod]
+        public void BinSerial_ShouldSerializeGuid()
+        {
+            var parent = new ClassWithGuid()
+            {
+                Guid = Guid.NewGuid(),
+            };
+
+            var stream = new MemoryStream();
+            var settings = new SharpSerializerBinarySettings(BinarySerializationMode.SizeOptimized);
+            var serializer = new SharpSerializer(settings);
+
+            serializer.Serialize(parent, stream);
+
+
+            serializer = new SharpSerializer(settings);
+            stream.Position = 0;
+            ClassWithGuid loaded = serializer.Deserialize(stream) as ClassWithGuid;
+
+            Assert.AreEqual(parent.Guid, loaded.Guid, "same guid");
+        }
+        #endregion
     }
 }

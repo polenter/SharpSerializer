@@ -107,6 +107,7 @@ namespace Polenter.Serialization.Advanced
 
                 if (type == typeof (TimeSpan)) return TimeSpan.Parse(text);
 
+                if (type == typeof(Guid)) return new Guid(text);
                 // Enumeration
                 if (type.IsEnum) return Enum.Parse(type, text, true);
 
