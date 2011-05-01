@@ -154,6 +154,11 @@ namespace Polenter.Serialization.Core.Binary
                 writer.Write(((DateTime) value).Ticks);
                 return;
             }
+            if (type == typeof(Guid))
+            {
+                writer.Write(((Guid)value).ToByteArray());
+                return;
+            }
 #if Smartphone
 #elif SILVERLIGHT
 #else

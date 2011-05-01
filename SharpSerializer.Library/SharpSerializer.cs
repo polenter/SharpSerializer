@@ -232,19 +232,32 @@ namespace Polenter.Serialization
         /// <param name = "stream"></param>
         public void Serialize(object data, Stream stream)
         {
+            Serialize(data, stream, this._serializer);
+        }
+
+
+        /// <summary>
+        /// Serializing to the stream. After serialization the stream will NOT be closed.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <param name="stream">The stream.</param>
+        /// <param name="customSerializer">The custom serializer.</param>
+        public void Serialize(object data, Stream stream, IPropertySerializer customSerializer)
+        {
             if (data == null) throw new ArgumentNullException("data");
 
             var factory = new PropertyFactory(PropertyProvider);
+
             Property property = factory.CreateProperty(RootName, data);
 
             try
             {
-                _serializer.Open(stream);
-                _serializer.Serialize(property);
+                customSerializer.Open(stream);
+                customSerializer.Serialize(property);
             }
             finally
             {
-                _serializer.Close();
+                customSerializer.Close();
             }
         }
 

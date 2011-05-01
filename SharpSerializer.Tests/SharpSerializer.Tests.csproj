@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="CorruptedSourceStreamTests.cs" />
     <Compile Include="HelloWorldTests.cs" />
-    <Compile Include="IgnoredAttributeTests.cs" />
+    <Compile Include="SerializationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

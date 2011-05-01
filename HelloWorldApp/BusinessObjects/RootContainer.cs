@@ -34,6 +34,11 @@ namespace HelloWorldApp.BusinessObjects
         public TimeSpan SimpleTimeSpan { get; set; }
 
         /// <summary>
+        /// Guid is simple type (since 2.8
+        /// </summary>
+        public Guid SimpleGuid { get; set; }
+
+        /// <summary>
         /// Every enumeration is simple type
         /// </summary>
         public SimpleEnum SimpleEnum { get; set; }
@@ -155,6 +160,7 @@ namespace HelloWorldApp.BusinessObjects
             root.SimpleDouble = 42.42;
             root.SimpleDateTime = new DateTime(2004, 5, 5);
             root.SimpleTimeSpan = new TimeSpan(5, 4, 3);
+            root.SimpleGuid = Guid.NewGuid();
             root.SimpleEnum = SimpleEnum.Three;
             root.FlagsEnum = FlagEnum.Alfa | FlagEnum.Beta;
             root.SimpleDecimal = Convert.ToDecimal(17.123);
