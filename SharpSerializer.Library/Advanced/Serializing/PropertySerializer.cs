@@ -141,6 +141,15 @@ namespace Polenter.Serialization.Advanced.Serializing
                 return;
             }
 
+            var complexReferenceProperty = property.Property as ComplexReferenceProperty;
+            if (complexReferenceProperty != null)
+            {
+                SerializeComplexReferenceProperty(new PropertyTypeInfo<ComplexReferenceProperty>(complexReferenceProperty,
+                                                                               null,
+                                                                               null));
+                return;
+            }
+
             throw new InvalidOperationException(string.Format("Unknown Property: {0}", property.Property.GetType()));
         }
 
@@ -177,8 +186,15 @@ namespace Polenter.Serialization.Advanced.Serializing
         protected abstract void SerializeCollectionProperty(PropertyTypeInfo<CollectionProperty> property);
 
         /// <summary>
+        /// Serializes a Complex (struct or class but not Enumerable or dictionary) property.
         /// </summary>
-        /// <param name = "property"></param>
+        /// <param name = "property">Item to be serialized</param>
         protected abstract void SerializeComplexProperty(PropertyTypeInfo<ComplexProperty> property);
+
+        /// <summary>
+        /// Serializes a ComplexReference property (2nd or later occurrence of a complex property).
+        /// </summary>
+        /// <param name = "property">Item to be serialized</param>
+        protected abstract void SerializeComplexReferenceProperty(PropertyTypeInfo<ComplexReferenceProperty> property);
     }
 }

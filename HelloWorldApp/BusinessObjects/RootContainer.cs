@@ -114,10 +114,20 @@ namespace HelloWorldApp.BusinessObjects
         public IComplexObject ComplexObject { get; set; }
 
         /// <summary>
+        /// ComplexProperty that contains a self reference
+        /// </summary>
+        public ComplexObject ComplexObjectWithSelfReference { get; set; }
+
+        /// <summary>
         /// Collection where item values are 
         /// derived from the collection item type
         /// </summary>
         public ComplexObjectPolymorphicCollection ComplexObjectCollection { get; set; }
+
+        /// <summary>
+        /// Collection where item values are partally re-referenced
+        /// </summary>
+        public ComplexObjectPolymorphicCollection ComplexObjectCollectionWithReferences { get; set; }
 
         /// <summary>
         /// Dictionary where values are derived 
@@ -148,8 +158,10 @@ namespace HelloWorldApp.BusinessObjects
         /// </summary>
         public object[] SingleArrayOfObjects { get; set; }
 
-
-
+        /// <summary>
+        /// Creates testdata.
+        /// </summary>
+        /// <returns></returns>
         public static RootContainer CreateFakeRoot()
         {
             var root = new RootContainer();
@@ -183,8 +195,19 @@ namespace HelloWorldApp.BusinessObjects
             root.GenericDictionaryOfPolymorphicValues.Add(2012,new ComplexObject(){SimpleInt = 2012000});
 
             root.ComplexObject = new ComplexObject {SimpleInt = 33};
+
+            root.ComplexObjectWithSelfReference = new ComplexObject { SimpleInt = 794, Name = "Self-Referencing" };
+            root.ComplexObjectWithSelfReference.OtherComplex = root.ComplexObjectWithSelfReference;
+            
             root.ComplexObjectCollection = new ComplexObjectPolymorphicCollection
                                                {new ComplexObject {SimpleInt = 11}, new ComplexObject {SimpleInt = 12}};
+
+            root.ComplexObjectCollectionWithReferences = new ComplexObjectPolymorphicCollection { 
+                new ComplexObject { SimpleInt = 1311 }, 
+                root.ComplexObjectWithSelfReference, 
+                new ComplexObject { SimpleInt = 131212 } };
+
+            
             root.ComplexObjectDictionary = new ComplexObjectPolymorphicDictionary();
             root.ComplexObjectDictionary.Add(100, new ComplexObject {SimpleInt = 101});
             root.ComplexObjectDictionary.Add(200, new ComplexObject {SimpleInt = 202});

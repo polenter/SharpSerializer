@@ -56,6 +56,13 @@ namespace Polenter.Serialization.Deserializing
                 return null;
             }
 
+            // Is it ComplexReferenceProperty?
+            var complexReferenceProperty = property as ComplexReferenceProperty;
+            if (complexReferenceProperty != null)
+            {
+                return createObjectFromComplexReferenceProperty(complexReferenceProperty);
+            }
+
             if (property.Type == null)
             {
                 // there is no property type and no expected type defined. Give up!
@@ -117,12 +124,19 @@ namespace Polenter.Serialization.Deserializing
         private object createObjectFromComplexProperty(ComplexProperty property)
         {
             object obj = Tools.CreateInstance(property.Type);
+            property.Value = obj; // remember if there is a reference to this item to be resolved
 
             fillProperties(obj, property.Properties);
 
             return obj;
         }
 
+        private object createObjectFromComplexReferenceProperty(ComplexReferenceProperty property)
+        {
+            object obj = property.ReferenceTarget.Value;
+            System.Diagnostics.Debug.Assert(obj != null, "ReferenceTarget.Value should already have been created");
+            return obj;
+        }
 
         private object createObjectFromCollectionProperty(CollectionProperty property)
         {

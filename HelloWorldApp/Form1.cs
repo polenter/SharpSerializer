@@ -81,9 +81,20 @@ namespace HelloWorldApp
             var fileInfo1 = new FileInfo(file1);
             var fileInfo2 = new FileInfo(file2);
 
+
             if (fileInfo1.Length > 0 && fileInfo1.Length == fileInfo2.Length)
             {
-                MessageBox.Show(string.Format("Both files have the same length of {0} bytes", fileInfo1.Length));
+                byte[] content1 = File.ReadAllBytes(file1);
+                byte[] content2 = File.ReadAllBytes(file2);
+
+                for(int i = 0; i < content1.Length; i++)
+                    if (content1[i] != content2[i])
+                    {
+                        MessageBox.Show(string.Format("Files differ at offset {0}", i));
+                        return;
+                    }
+
+                MessageBox.Show(string.Format("Both files have the same length of {0} bytes and the same content", fileInfo1.Length));
             }
             else
             {
