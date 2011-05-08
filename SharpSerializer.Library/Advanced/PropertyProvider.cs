@@ -35,7 +35,12 @@ using Polenter.Serialization.Serializing;
 namespace Polenter.Serialization.Advanced
 {
     /// <summary>
-    ///   Provides properties to serialize. Its methods GetAllProperties and IgnoreProperty can be
+    /// Provides properties to serialize from source object. Implements the strategy 
+    /// which subproperties to use and 
+    /// wich to ignore and
+    /// how to travese the source object to get subproperties
+    ///   
+    /// Its methods GetAllProperties and IgnoreProperty can be
     ///   overwritten in an inherited class to customize its functionality. 
     ///   Its property PropertiesToIgnore contains properties, which are ignored during the serialization.
     /// </summary>

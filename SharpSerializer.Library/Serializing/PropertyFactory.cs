@@ -36,26 +36,53 @@ using Polenter.Serialization.Core;
 namespace Polenter.Serialization.Serializing
 {
     /// <summary>
-    ///   Decomposes object to a Property and its Subproperties
+    ///   Decomposes object to a Property and its Sub-Properties as part of the format independent serialisatoin.
+    ///   Recursive traverse of the object until the complete Property with allsub- and parent-properties is loaded.
+    ///   If a <see cref="ComplexProperty"/> is recursivly pointing to some other object already processed
+    ///   its RecursionId is set to a non-0 value to indicate possible
+    ///   endless-Recursion.
     /// </summary>
     public sealed class PropertyFactory
     {
+        #region local memory
+        /// <summary>
+        /// needed to invoke parameterless functions via reflection
+        /// </summary>
         private readonly object[] _emptyObjectArray = new object[0];
-        private readonly PropertyProvider _propertyProvider;
-
 
         /// <summary>
+        /// Collects subdata from source object
         /// </summary>
-        /// <param name = "propertyProvider">provides all important properties of the decomposed object</param>
+        private readonly PropertyProvider _propertyProvider;
+
+        /// <summary>
+        /// All complex item already processed. Used to detect if a source object is referenced more than once.
+        /// </summary>
+        private IDictionary<object, ComplexProperty> nonDuplicateValues = new Dictionary<object, ComplexProperty>();
+
+        /// <summary>
+        /// Sequencegenerator: Every complex item that is used more than once gets an id out of this sequence.
+        /// </summary>
+        private int nextReferenceId = 1;
+        #endregion
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyFactory"/> class.
+        /// </summary>
+        /// <param name="propertyProvider">provides all important properties of the decomposed object</param>
         public PropertyFactory(PropertyProvider propertyProvider)
         {
             _propertyProvider = propertyProvider;
         }
 
         /// <summary>
+        /// Creates the Property of specialized type.
+        ///   If a <see cref="ComplexProperty"/> is recursivly pointing to some other object already processed
+        ///   its RecursionId is set to a non-0 value to indicate possible
+        ///   endless-Recursion.
         /// </summary>
-        /// <param name = "name"></param>
-        /// <param name = "value"></param>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
         /// <returns>NullProperty if the value is null</returns>
         public Property CreateProperty(string name, object value)
         {
@@ -109,16 +136,28 @@ namespace Polenter.Serialization.Serializing
                 }
             }
 
+            ComplexProperty complexProperty;
             if (property == null)
             {
-                // If nothing was recognized, a complex type will be taken
-                property = new ComplexProperty(name, typeInfo.Type);
+                // special Property not created yet
+                if (nonDuplicateValues.TryGetValue(value, out complexProperty))
+                {
+                    // it was already processed => its recursive
+                    if (!complexProperty.IsReferencedMoreThanOnce)
+                        complexProperty.ComplexReferenceId = nextReferenceId++; // mark as recursive, if necessary
+                    return new ComplexReferenceProperty(name, complexProperty);
+                }
+
+                // If nothing was recognized, a complex type will be created
+                property = new ComplexProperty(name, typeInfo.Type, value);
             }
 
             // Estimating properties of the complex type
-            var complexProperty = property as ComplexProperty;
+            complexProperty = property as ComplexProperty;
             if (complexProperty != null)
             {
+                nonDuplicateValues.Add(value, complexProperty);
+
                 IList<PropertyInfo> propertyInfos = _propertyProvider.GetProperties(typeInfo);
                 foreach (PropertyInfo propertyInfo in propertyInfos)
                 {
@@ -131,7 +170,6 @@ namespace Polenter.Serialization.Serializing
             }
             return property;
         }
-
 
         private Property createCollectionProperty(string name, TypeInfo info, object value)
         {

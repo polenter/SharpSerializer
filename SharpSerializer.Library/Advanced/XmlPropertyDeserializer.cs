@@ -44,6 +44,11 @@ namespace Polenter.Serialization.Advanced
     {
         private readonly IXmlReader _reader;
 
+        /// <summary>
+        /// All complex item already processed. Used to for ComplexReference resolution.
+        /// </summary>
+        private IDictionary<int, ComplexProperty> complexItems = new Dictionary<int, ComplexProperty>();
+
         ///<summary>
         ///</summary>
         ///<param name = "reader"></param>
@@ -152,6 +157,13 @@ namespace Polenter.Serialization.Advanced
             {
                 parseCollectionProperty(collectionProperty);
                 return collectionProperty;
+            }
+
+            var complexReferenceProperty = property as ComplexReferenceProperty;
+            if (complexReferenceProperty != null)
+            {
+                parseComplexReferenceProperty(complexReferenceProperty);
+                return complexReferenceProperty;
             }
 
             var complexProperty = property as ComplexProperty;
@@ -350,8 +362,32 @@ namespace Polenter.Serialization.Advanced
             }
         }
 
+        private void parseComplexReferenceProperty(ComplexReferenceProperty property)
+        {
+            int complexReferenceId = _reader.GetAttributeAsInt(Attributes.ComplexReferenceId);
+            ComplexProperty target;
+            if (complexItems.TryGetValue(complexReferenceId, out target))
+                property.ReferenceTarget = target;
+            else
+            {
+                string message = string.Format("{0}-parser : Cannot find <{6} {4}='{5}'/>  when resolving <{1} {2} ='{3}' {4}='{5}'/>", 
+                    GetType().Name,
+                    Elements.ComplexObjectReference, 
+                    Attributes.Name, property.Name,
+                    Attributes.ComplexReferenceId, complexReferenceId,
+                    Elements.ComplexObject);
+                throw new FormatException(message);
+            }
+        }
+
         private void parseComplexProperty(ComplexProperty property)
         {
+            property.ComplexReferenceId = _reader.GetAttributeAsInt(Attributes.ComplexReferenceId);
+
+            // remember for later resolution
+            if (property.IsReferencedMoreThanOnce)
+                complexItems.Add(property.ComplexReferenceId, property);
+
             foreach (string subElement in _reader.ReadSubElements())
             {
                 if (subElement == SubElements.Properties)
@@ -394,6 +430,8 @@ namespace Polenter.Serialization.Advanced
                     return new SimpleProperty(propertyName, propertyType);
                 case PropertyTag.Complex:
                     return new ComplexProperty(propertyName, propertyType);
+                case PropertyTag.ComplexReference:
+                    return new ComplexReferenceProperty(propertyName);
                 case PropertyTag.Collection:
                     return new CollectionProperty(propertyName, propertyType);
                 case PropertyTag.Dictionary:
@@ -418,6 +456,7 @@ namespace Polenter.Serialization.Advanced
             if (name == Elements.Null) return PropertyTag.Null;
             if (name == Elements.Dictionary) return PropertyTag.Dictionary;
             if (name == Elements.MultiArray) return PropertyTag.MultiArray;
+            if (name == Elements.ComplexObjectReference) return PropertyTag.ComplexReference;
 
             return PropertyTag.Unknown;
         }
@@ -433,7 +472,8 @@ namespace Polenter.Serialization.Advanced
             Dictionary,
             SingleArray,
             MultiArray,
-            Null
+            Null,
+            ComplexReference
         }
 
         #endregion

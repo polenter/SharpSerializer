@@ -42,6 +42,11 @@ namespace Polenter.Serialization.Core.Xml
         public const string ComplexObject = "Complex";
 
         ///<summary>
+        /// internal used as an id for referencing already serialized items
+        ///</summary>
+        public const string ComplexObjectReference = "ComplexReference";
+
+        ///<summary>
         ///</summary>
         public const string Dictionary = "Dictionary";
 
@@ -132,5 +137,10 @@ namespace Polenter.Serialization.Core.Xml
         ///<summary>
         ///</summary>
         public const string ValueType = "valueType";
+
+        ///<summary>
+        /// internal used as an id to identify and refere already serialized items
+        ///</summary>
+        public const string ComplexReferenceId = "id";
     }
 }

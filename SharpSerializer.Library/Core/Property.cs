@@ -179,16 +179,54 @@ namespace Polenter.Serialization.Core
     {
         private PropertyCollection _properties;
 
-        ///<summary>
-        ///</summary>
-        ///<param name = "name"></param>
-        ///<param name = "type"></param>
-        public ComplexProperty(string name, Type type)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComplexProperty"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="value">The value.</param>
+        public ComplexProperty(string name, Type type, object value)
             : base(name, type)
+        {
+            this.Value = value;
+            this.ComplexReferenceId = 0; // assume it is not recursive (yet)
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComplexProperty"/> class.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        public ComplexProperty(string name, System.Type type)
+            : this(name, type, null)
         {
         }
 
         ///<summary>
+        ///  The actual complex object.
+        ///  On Serialisation used to find out if object was serialized before
+        ///</summary>
+        public object Value { get; set; }
+
+        /// <summary>
+        /// [Get or Set] If not 0, this is an Item that is used more than once. 
+        /// </summary>
+        /// <value>The recursion id.</value>
+        public int ComplexReferenceId { get; set; }
+
+        /// <summary>
+        /// [Gets] True if this property is referenced more than once.
+        /// </summary>
+        public bool IsReferencedMoreThanOnce
+        {
+            get
+            {
+                return ComplexReferenceId != 0;
+            }
+        }
+
+        ///<summary>
+        /// Sub properties
         ///</summary>
         public PropertyCollection Properties
         {
@@ -201,6 +239,36 @@ namespace Polenter.Serialization.Core
         }
     }
 
+    /// <summary>
+    ///   Represents complex type via a reference of an other complex type.
+    /// </summary>
+    public class ComplexReferenceProperty : Property
+    {
+        /// <summary>
+        /// [Get, Set} where this is pointing to.
+        /// </summary>
+        public ComplexProperty ReferenceTarget  { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComplexReferenceProperty"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="referenceTarget">The reference target.</param>
+        public ComplexReferenceProperty(string name, ComplexProperty referenceTarget)
+            : base(name, null)
+        {
+            this.ReferenceTarget = referenceTarget;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComplexReferenceProperty"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        public ComplexReferenceProperty(string name)
+            : this(name, null)
+        {
+        }
+    }
 
     /// <summary>
     ///   Represents type which is ICollection

@@ -62,6 +62,16 @@ namespace Polenter.Serialization.Core.Binary
         ///<summary>
         ///</summary>
         public const byte SingleArray = 7;
+
+        ///<summary>
+        /// For binary compatibility reason extra type-id: same as ComplexObjectWith, but contains 
+        ///</summary>
+        public const byte ComplexObjectWithId = 8;
+
+        ///<summary>
+        /// reference to previosly serialized  ComplexObjectWithId
+        ///</summary>
+        public const byte ComplexObjectReference = 9;
     }
 
     /// <summary>

@@ -118,6 +118,70 @@ namespace Polenter.Serialization
         }
         #endregion
 
+        #region XmlSerial_TwoIdenticalChildsShouldBeSameInstance  with helpers
+        /// <summary>
+        /// Local testclass to be serialized
+        /// </summary>
+        public class ParentChildTestClass
+        {
+            public string Name { get; set; }
+            public ParentChildTestClass Mother { get; set; }
+            public ParentChildTestClass Father { get; set; }
+        }
+
+        [TestMethod]
+        public void XmlSerial_TwoIdenticalChildsShouldBeSameInstance()
+        {
+            var parent = new ParentChildTestClass()
+            {
+                Name = "parent",
+            };
+
+            var child = new ParentChildTestClass()
+            {
+                Name = "child",
+                Father = parent,
+                Mother = parent,
+            };
+
+            Assert.AreSame(child.Father, child.Mother, "Precondition: Saved Father and Mother are same instance");
+
+            var stream = new MemoryStream();
+            var settings = new SharpSerializerXmlSettings();
+            var serializer = new SharpSerializer(settings);
+
+            serializer.Serialize(child, stream);
+
+            /*
+                <Complex name="Root" type="Polenter.Serialization.XmlSerialisationTests+ParentChildTestClass, SharpSerializer.Tests">
+	                <Properties>
+		                <Simple name="Name" value="child" />
+		                <Complex name="Mother" id="1">
+			                <Properties>
+				                <Simple name="Name" value="parent" />
+				                <Null name="Mother" />
+				                <Null name="Father" />
+			                </Properties>
+		                </Complex>
+		                <ComplexReference name="Father" id="1" />
+	                </Properties>
+                </Complex>
+             */
+            stream.Position = 0;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(stream);
+            System.Console.WriteLine(doc.InnerXml);
+
+            serializer = new SharpSerializer(settings);
+            stream.Position = 0;
+            ParentChildTestClass loaded = serializer.Deserialize(stream) as ParentChildTestClass;
+
+            Assert.AreSame(loaded.Father, loaded.Mother, "Loaded Father and Mother are same instance");
+        }
+
+
+        #endregion
+
         #region Serial_Guid with helpers
         /// <summary>
         /// Local testclass to be serialized
@@ -173,6 +237,39 @@ namespace Polenter.Serialization
             ClassWithGuid loaded = serializer.Deserialize(stream) as ClassWithGuid;
 
             Assert.AreEqual(parent.Guid, loaded.Guid, "same guid");
+        }
+        #endregion
+
+
+        #region BinSerial
+        [TestMethod]
+        public void BinSerial_TwoIdenticalChildsShouldBeSameInstance()
+        {
+            var parent = new ParentChildTestClass()
+            {
+                Name = "parent",
+            };
+
+            var child = new ParentChildTestClass()
+            {
+                Name = "child",
+                Father = parent,
+                Mother = parent,
+            };
+
+            Assert.AreSame(child.Father, child.Mother, "Precondition: Saved Father and Mother are same instance");
+
+            var stream = new MemoryStream();
+            var settings = new SharpSerializerBinarySettings(BinarySerializationMode.SizeOptimized);
+            var serializer = new SharpSerializer(settings);
+
+            serializer.Serialize(child, stream);
+
+            serializer = new SharpSerializer(settings);
+            stream.Position = 0;
+            ParentChildTestClass loaded = serializer.Deserialize(stream) as ParentChildTestClass;
+
+            Assert.AreSame(loaded.Father, loaded.Mother, "Loaded Father and Mother are same instance");
         }
         #endregion
     }

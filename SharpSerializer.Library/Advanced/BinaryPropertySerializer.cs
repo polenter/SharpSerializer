@@ -246,11 +246,27 @@ namespace Polenter.Serialization.Advanced
         }
 
         /// <summary>
+        /// Serializes a ComplexReference property (2nd or later occurrence of a complex property).
+        /// </summary>
+        /// <param name="property">Item to be serialized</param>
+        protected override void SerializeComplexReferenceProperty(PropertyTypeInfo<ComplexReferenceProperty> property)
+        {
+            writePropertyHeader(Elements.ComplexObjectReference, property.Name, property.ValueType);
+            _writer.WriteNumber(property.Property.ReferenceTarget.ComplexReferenceId);
+        }
+
+        /// <summary>
         /// </summary>
         /// <param name = "property"></param>
         protected override void SerializeComplexProperty(PropertyTypeInfo<ComplexProperty> property)
         {
-            writePropertyHeader(Elements.ComplexObject, property.Name, property.ValueType);
+            if (property.Property.IsReferencedMoreThanOnce)
+            {
+                writePropertyHeader(Elements.ComplexObjectWithId, property.Name, property.ValueType);
+                _writer.WriteNumber(property.Property.ComplexReferenceId);
+            }
+            else
+                writePropertyHeader(Elements.ComplexObject, property.Name, property.ValueType);
 
             // Properties
             writeProperties(property.Property.Properties, property.Property.Type);

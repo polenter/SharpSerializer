@@ -5,7 +5,12 @@ namespace HelloWorldApp.BusinessObjects
 {
     public interface IComplexObject { int SimpleInt { get; set; } }
 
-    public class ComplexObject : IComplexObject {public int SimpleInt { get; set; }}
+    public class ComplexObject : IComplexObject
+    {
+        public int SimpleInt { get; set; } 
+        public string Name { get; set; } 
+        public IComplexObject OtherComplex { get; set; }
+    }
 
     public class ComplexObjectPolymorphicCollection : Collection<IComplexObject>{}
 

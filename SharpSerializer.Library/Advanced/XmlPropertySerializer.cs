@@ -293,13 +293,32 @@ namespace Polenter.Serialization.Advanced
         }
 
         /// <summary>
+        /// Serializes the complex reference property.
         /// </summary>
-        /// <param name = "property"></param>
+        /// <param name = "property">Item to be serialized</param>
+        protected override void SerializeComplexReferenceProperty(PropertyTypeInfo<ComplexReferenceProperty> property)
+        {
+            writeStartProperty(Elements.ComplexObjectReference, property.Name, null);
+            _writer.WriteAttribute(Attributes.ComplexReferenceId, property.Property.ReferenceTarget.ComplexReferenceId);
+            writeEndProperty();
+        }
+
+        /// <summary>
+        /// Serializes a Complex (struct or class but not Enumerable or dictionary) property.
+        /// </summary>
+        /// <param name="property">Item to be serialized</param>
         protected override void SerializeComplexProperty(PropertyTypeInfo<ComplexProperty> property)
         {
             writeStartProperty(Elements.ComplexObject, property.Name, property.ValueType);
 
-            // Properties
+            // additional attribute complexReferenceId
+            int complexReferenceId = property.Property.ComplexReferenceId;
+            if (complexReferenceId != 0)
+            {
+                _writer.WriteAttribute(Attributes.ComplexReferenceId, complexReferenceId);
+            }
+
+            // SubProperties
             writeProperties(property.Property.Properties, property.Property.Type);
 
             writeEndProperty();
