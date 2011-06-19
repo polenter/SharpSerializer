@@ -44,11 +44,23 @@ namespace HelloWorldApp.BusinessObjects
         public SimpleEnum SimpleEnum { get; set; }
 
         /// <summary>
+        /// Every enumeration is of simple type.		
+        /// Enumeration can inherit from another primitive type which is not longer than Int32. 
+        /// </summary>
+        public SimpleEnumInheritedFromByte SimpleEnumInheritedFromByte { get; set; }
+
+        /// <summary>
         /// Enumeration with FlagsAttribute is SimpleType. 
         /// It is correct serialized if the result of the flag combination has unique int value,
         /// i.e. Flag1 = 2, Flag2 = 4, Flag3 = 8 ...
         /// </summary>
         public FlagEnum FlagsEnum { get; set; }
+
+        /// <summary>
+        /// Enumeration with FlagsAttribute is of simple type. 
+        /// It can be inherited from another primitive type which is not longer than Int32
+        /// </summary>
+        public FlagEnumInheritedFromUInt16 FlagEnumInheritedFromUInt16 { get; set; }
 
         /// <summary>
         /// Decimal is 16 bytes long
@@ -174,7 +186,10 @@ namespace HelloWorldApp.BusinessObjects
             root.SimpleTimeSpan = new TimeSpan(5, 4, 3);
             root.SimpleGuid = Guid.NewGuid();
             root.SimpleEnum = SimpleEnum.Three;
+            root.SimpleEnumInheritedFromByte = SimpleEnumInheritedFromByte.ThreeB;
             root.FlagsEnum = FlagEnum.Alfa | FlagEnum.Beta;
+            root.FlagEnumInheritedFromUInt16 = FlagEnumInheritedFromUInt16.BetaU | FlagEnumInheritedFromUInt16.GammaU;
+
             root.SimpleDecimal = Convert.ToDecimal(17.123);
             root.SimpleString = "sth";
             root.EmptyString = string.Empty;
@@ -233,11 +248,26 @@ namespace HelloWorldApp.BusinessObjects
         Three
     }
 
+    public enum SimpleEnumInheritedFromByte : byte
+    {
+        OneB,
+        TwoB,
+        ThreeB
+    }
+
     [Flags]
     public enum FlagEnum
     {
         Alfa =2,
         Beta=4,
         Gamma=8
+    }
+
+    [Flags]
+    public enum FlagEnumInheritedFromUInt16 : ushort
+    {
+        AlfaU = 2,
+        BetaU = 4,
+        GammaU = 8
     }
 }
