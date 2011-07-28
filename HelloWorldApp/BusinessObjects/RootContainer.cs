@@ -85,6 +85,11 @@ namespace HelloWorldApp.BusinessObjects
         public AdvancedStruct AdvancedStruct { get; set; }
 
         /// <summary>
+        /// Type is serialized as a simple object
+        /// </summary>
+        public Type Type { get; set; }
+
+        /// <summary>
         /// One dimensional array of simple type.
         /// It is serialized as SingleDimensionalArrayProperty
         /// </summary>
@@ -194,6 +199,7 @@ namespace HelloWorldApp.BusinessObjects
             root.SimpleString = "sth";
             root.EmptyString = string.Empty;
             root.AdvancedStruct = new AdvancedStruct() {DateTime = new DateTime(2010,4,10),SimpleText = "nix"};
+            root.Type = typeof(List<string>);
 
             root.SingleArray = new[] {"ala", "ma", null, "kota"};
             root.DoubleArray = new[,] {{"k1", "k2"}, {"b1", "b2"}, {"z1", "z2"}};
