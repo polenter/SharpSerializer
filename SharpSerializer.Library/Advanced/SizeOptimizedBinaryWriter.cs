@@ -102,6 +102,12 @@ namespace Polenter.Serialization.Advanced
         /// <param name = "value"></param>
         public void WriteValue(object value)
         {
+            // Type is serialized other way
+            if (value!=null && (value.GetType()==typeof(Type) || value.GetType().IsSubclassOf(typeof(Type))))
+            {
+                WriteType((Type)value);
+                return;
+            }
             _cache.Add(new ValueWriteCommand(value));
         }
 

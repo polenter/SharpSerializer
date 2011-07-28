@@ -66,6 +66,11 @@ namespace Polenter.Serialization.Core
                 // new since the version 2.8
                 return true;
             }
+            if (type == typeof(Type) || type.IsSubclassOf(typeof(Type)))
+            {
+                // new since v.2.11
+                return true;
+            }
             if (type.IsEnum)
             {
                 return true;

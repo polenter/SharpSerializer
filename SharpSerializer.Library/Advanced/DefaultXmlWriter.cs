@@ -132,7 +132,18 @@ namespace Polenter.Serialization.Advanced
         public void WriteAttribute(string attributeId, object value)
         {
             if (value == null) return;
-            string valueAsText = _simpleValueConverter.ConvertToString(value);
+            var type = value.GetType();
+            string valueAsText;
+            if (type != null && (type == typeof(Type) || type.IsSubclassOf(typeof(Type))))
+            {
+                // Type was detected
+                valueAsText = _typeNameProvider.ConvertToTypeName((Type) value);
+            }
+            else
+            {
+                // other primitive Type was detected
+                valueAsText = _simpleValueConverter.ConvertToString(value);
+            }            
             _writer.WriteAttributeString(attributeId, valueAsText);
         }
 

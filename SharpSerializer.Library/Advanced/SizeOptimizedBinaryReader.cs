@@ -124,6 +124,12 @@ namespace Polenter.Serialization.Advanced
         /// <returns></returns>
         public object ReadValue(Type expectedType)
         {
+            if (expectedType!=null && (expectedType==typeof(Type) || expectedType.IsSubclassOf(typeof(Type))))
+            {
+                // Type was detected
+                return _types[BinaryReaderTools.ReadNumber(_reader)];
+            }
+            // Other simple type
             return BinaryReaderTools.ReadValue(expectedType, _reader);
         }
 
