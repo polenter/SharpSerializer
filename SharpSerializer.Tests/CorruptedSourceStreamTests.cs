@@ -42,7 +42,8 @@ namespace Polenter.Serialization
         public void CorruptedBurstBinaryStreamTest()
         {
             var myArray = new[] { "ala", "ma", null, "kota" };
-            serialize(myArray, new SharpSerializer(BinarySerializationMode.Burst), replaceSomeBytesInData);
+            var settings = new SharpSerializerBinarySettings(BinarySerializationMode.Burst);
+            serialize(myArray, new SharpSerializer(settings), replaceSomeBytesInData);
         }
 
 
@@ -60,7 +61,8 @@ namespace Polenter.Serialization
         public void TooShortSizeOptimizedBinaryStreamTest()
         {
             var myArray = new[] { "ala", "ma", null, "kota" };
-            serialize(myArray, new SharpSerializer(BinarySerializationMode.SizeOptimized), shortenData);
+            var settings = new SharpSerializerBinarySettings(BinarySerializationMode.Burst);
+            serialize(myArray, new SharpSerializer(settings), shortenData);
         }
 
         [TestMethod]
@@ -68,7 +70,8 @@ namespace Polenter.Serialization
         public void TooShortBurstBinaryStreamTest()
         {
             var myArray = new[] { "ala", "ma", null, "kota" };
-            serialize(myArray, new SharpSerializer(BinarySerializationMode.Burst), shortenData);
+            var settings = new SharpSerializerBinarySettings(BinarySerializationMode.Burst);
+            serialize(myArray, new SharpSerializer(settings), shortenData);
         }
 
         private static void serialize(object source, SharpSerializer serializer, Func<byte[], byte[]> dataCallback)

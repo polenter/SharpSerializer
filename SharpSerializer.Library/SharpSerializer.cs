@@ -74,15 +74,6 @@ namespace Polenter.Serialization
             }
         }
 
-        ///<summary>
-        ///  Binary serialization
-        ///</summary>
-        ///<param name = "binaryMode"></param>
-        public SharpSerializer(BinarySerializationMode binaryMode)
-        {
-            initialize(new SharpSerializerBinarySettings(binaryMode));
-        }
-
         /// <summary>
         ///   Xml serialization with custom settings
         /// </summary>

@@ -413,7 +413,8 @@ namespace HelloWorldApp
             var obj = RootContainer.CreateFakeRoot();
 
             // create instance of sharpSerializer
-            var serializer = new SharpSerializer(BinarySerializationMode.Burst);
+            var settings = new SharpSerializerBinarySettings(BinarySerializationMode.Burst);
+            var serializer = new SharpSerializer(settings);
 
 
             // *************************************************************************************

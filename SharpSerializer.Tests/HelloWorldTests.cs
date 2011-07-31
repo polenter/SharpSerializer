@@ -26,7 +26,8 @@ namespace Polenter.Serialization
                 serialize(testCase, new SharpSerializer(true));
 
                 // Binary Burst
-                serialize(testCase, new SharpSerializer(BinarySerializationMode.Burst));
+                var settings = new SharpSerializerBinarySettings(BinarySerializationMode.Burst);
+                serialize(testCase, new SharpSerializer());
             }
         }
 
