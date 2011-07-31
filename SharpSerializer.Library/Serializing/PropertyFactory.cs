@@ -36,53 +36,36 @@ using Polenter.Serialization.Core;
 namespace Polenter.Serialization.Serializing
 {
     /// <summary>
-    ///   Decomposes object to a Property and its Sub-Properties as part of the format independent serialisatoin.
-    ///   Recursive traverse of the object until the complete Property with allsub- and parent-properties is loaded.
-    ///   If a <see cref="ComplexProperty"/> is recursivly pointing to some other object already processed
-    ///   its RecursionId is set to a non-0 value to indicate possible
-    ///   endless-Recursion.
+    ///   Decomposes object to a Property and its Subproperties
     /// </summary>
     public sealed class PropertyFactory
     {
-        #region local memory
-        /// <summary>
-        /// needed to invoke parameterless functions via reflection
-        /// </summary>
         private readonly object[] _emptyObjectArray = new object[0];
-
-        /// <summary>
-        /// Collects subdata from source object
-        /// </summary>
         private readonly PropertyProvider _propertyProvider;
 
         /// <summary>
-        /// All complex item already processed. Used to detect if a source object is referenced more than once.
+        /// Contains reference targets.
         /// </summary>
-        private IDictionary<object, ComplexProperty> nonDuplicateValues = new Dictionary<object, ComplexProperty>();
+        private readonly Dictionary<object, ReferenceTargetProperty> _propertyCache =
+            new Dictionary<object, ReferenceTargetProperty>();
 
         /// <summary>
-        /// Sequencegenerator: Every complex item that is used more than once gets an id out of this sequence.
+        /// It will be incremented as neccessary
         /// </summary>
-        private int nextReferenceId = 1;
-        #endregion
+        private int _currentReferenceId = 1;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyFactory"/> class.
         /// </summary>
-        /// <param name="propertyProvider">provides all important properties of the decomposed object</param>
+        /// <param name = "propertyProvider">provides all important properties of the decomposed object</param>
         public PropertyFactory(PropertyProvider propertyProvider)
         {
             _propertyProvider = propertyProvider;
         }
 
         /// <summary>
-        /// Creates the Property of specialized type.
-        ///   If a <see cref="ComplexProperty"/> is recursivly pointing to some other object already processed
-        ///   its RecursionId is set to a non-0 value to indicate possible
-        ///   endless-Recursion.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
+        /// <param name = "name"></param>
+        /// <param name = "value"></param>
         /// <returns>NullProperty if the value is null</returns>
         public Property CreateProperty(string name, object value)
         {
@@ -99,84 +82,117 @@ namespace Polenter.Serialization.Serializing
                 return property;
             }
 
+            // From now it can only be an instance of ReferenceTargetProperty
+            ReferenceTargetProperty referenceTarget = createReferenceTargetInstance(name, typeInfo);
+
+            // Search in Cache
+            ReferenceTargetProperty cachedTarget;
+            if (_propertyCache.TryGetValue(value, out cachedTarget))
+            {
+                // Value was already referenced
+                // Its reference will be used
+                cachedTarget.Reference.Count++;
+                referenceTarget.MakeFlatCopyFrom(cachedTarget);
+                return referenceTarget;
+            }
+
+            // Target was not found in cache
+            // it must be created
+
+            // Adding property to cache
+            referenceTarget.Reference = new ReferenceInfo();
+            referenceTarget.Reference.Id = _currentReferenceId++;
+            _propertyCache.Add(value, referenceTarget);
+
+            // Parsing the property
+            var handled = fillSingleDimensionalArrayProperty(referenceTarget as SingleDimensionalArrayProperty, typeInfo, value);
+            handled = handled || fillMultiDimensionalArrayProperty(referenceTarget as MultiDimensionalArrayProperty, typeInfo, value);
+            handled = handled || fillDictionaryProperty(referenceTarget as DictionaryProperty, typeInfo, value);
+            handled = handled || fillCollectionProperty(referenceTarget as CollectionProperty, typeInfo, value);
+            handled = handled || fillComplexProperty(referenceTarget as ComplexProperty, typeInfo, value);
+
+            if (!handled)
+                throw new InvalidOperationException(string.Format("Property cannot be filled. Property: {0}",
+                                                                  referenceTarget));
+           
+            return referenceTarget;
+        }
+
+        private static ReferenceTargetProperty createReferenceTargetInstance(string name, TypeInfo typeInfo)
+        {
             // Is it array?
             if (typeInfo.IsArray)
             {
                 if (typeInfo.ArrayDimensionCount < 2)
                 {
                     // 1D-Array
-                    property = createSingleDimensionalArrayProperty(name, typeInfo, value);
+                    return new SingleDimensionalArrayProperty(name, typeInfo.Type);
                 }
-                else
-                {
-                    // MultiD-Array
-                    property = createMultiDimensionalArrayProperty(name, typeInfo, value);
-                }
+                // MultiD-Array
+                return new MultiDimensionalArrayProperty(name, typeInfo.Type);
             }
-            else
+
+            if (typeInfo.IsDictionary)
             {
-                if (typeInfo.IsDictionary)
-                {
-                    property = createDictionaryProperty(name, typeInfo, value);
-                }
-                else
-                {
-                    if (typeInfo.IsCollection)
-                    {
-                        property = createCollectionProperty(name, typeInfo, value);
-                    }
-                    else
-                    {
-                        if (typeInfo.IsEnumerable)
-                        {
-                            // Actually it would be enough to check if the typeinfo.IsEnumerable is true...
-                            property = createCollectionProperty(name, typeInfo, value);
-                        }
-                    }
-                }
+                return new DictionaryProperty(name, typeInfo.Type);
             }
-
-            ComplexProperty complexProperty;
-            if (property == null)
+            if (typeInfo.IsCollection)
             {
-                // special Property not created yet
-                if (nonDuplicateValues.TryGetValue(value, out complexProperty))
-                {
-                    // it was already processed => its recursive
-                    if (!complexProperty.IsReferencedMoreThanOnce)
-                        complexProperty.ComplexReferenceId = nextReferenceId++; // mark as recursive, if necessary
-                    return new ComplexReferenceProperty(name, complexProperty);
-                }
-
-                // If nothing was recognized, a complex type will be created
-                property = new ComplexProperty(name, typeInfo.Type, value);
+                return new CollectionProperty(name, typeInfo.Type);
             }
-
-            // Estimating properties of the complex type
-            complexProperty = property as ComplexProperty;
-            if (complexProperty != null)
+            if (typeInfo.IsEnumerable)
             {
-                nonDuplicateValues.Add(value, complexProperty);
-
-                IList<PropertyInfo> propertyInfos = _propertyProvider.GetProperties(typeInfo);
-                foreach (PropertyInfo propertyInfo in propertyInfos)
-                {
-                    object subValue = propertyInfo.GetValue(value, _emptyObjectArray);
-
-                    Property subProperty = CreateProperty(propertyInfo.Name, subValue);
-
-                    complexProperty.Properties.Add(subProperty);
-                }
+                // Actually it would be enough to check if the typeinfo.IsEnumerable is true...
+                return new CollectionProperty(name, typeInfo.Type);
             }
-            return property;
+
+            // If nothing was recognized, a complex type will be created
+            return new ComplexProperty(name, typeInfo.Type);
         }
 
-        private Property createCollectionProperty(string name, TypeInfo info, object value)
+        private bool fillComplexProperty(ComplexProperty property, TypeInfo typeInfo, object value)
         {
-            var property = new CollectionProperty(name, info.Type);
+            if (property == null)
+                return false;
+
+            // Parsing properties
+            parseProperties(property, typeInfo, value);
+
+            return true;
+        }
+
+        private void parseProperties(ComplexProperty property, TypeInfo typeInfo, object value)
+        {
+            IList<PropertyInfo> propertyInfos = _propertyProvider.GetProperties(typeInfo);
+            foreach (PropertyInfo propertyInfo in propertyInfos)
+            {
+                object subValue = propertyInfo.GetValue(value, _emptyObjectArray);
+
+                Property subProperty = CreateProperty(propertyInfo.Name, subValue);
+
+                property.Properties.Add(subProperty);
+            }
+        }
+
+
+        private bool fillCollectionProperty(CollectionProperty property, TypeInfo info, object value)
+        {
+            if (property == null)
+                return false;
+
+            // Parsing properties
+            parseProperties(property, info, value);
+
+            // Parse Items
+            parseCollectionItems(property, info, value);
+
+            return true;
+        }
+
+        private void parseCollectionItems(CollectionProperty property, TypeInfo info, object value)
+        {
             property.ElementType = info.ElementType;
 
-            // Items
             var collection = (ICollection) value;
             foreach (object item in collection)
             {
@@ -184,18 +200,27 @@ namespace Polenter.Serialization.Serializing
 
                 property.Items.Add(itemProperty);
             }
-
-            return property;
         }
 
-        private Property createDictionaryProperty(string name, TypeInfo info, object value)
+        private bool fillDictionaryProperty(DictionaryProperty property, TypeInfo info, object value)
         {
-            var property = new DictionaryProperty(name, info.Type);
+            if (property == null)
+                return false;
 
+            // Properties
+            parseProperties(property, info, value);
+
+            // Items
+            parseDictionaryItems(property, info, value);
+
+            return true;
+        }
+
+        private void parseDictionaryItems(DictionaryProperty property, TypeInfo info, object value)
+        {
             property.KeyType = info.KeyType;
             property.ValueType = info.ElementType;
 
-            // Items
             var dictionary = (IDictionary) value;
             foreach (DictionaryEntry entry in dictionary)
             {
@@ -205,13 +230,12 @@ namespace Polenter.Serialization.Serializing
 
                 property.Items.Add(new KeyValueItem(keyProperty, valueProperty));
             }
-
-            return property;
         }
 
-        private Property createMultiDimensionalArrayProperty(string name, TypeInfo info, object value)
+        private bool fillMultiDimensionalArrayProperty(MultiDimensionalArrayProperty property, TypeInfo info, object value)
         {
-            var property = new MultiDimensionalArrayProperty(name, info.Type);
+            if (property == null)
+                return false;
             property.ElementType = info.ElementType;
 
             var analyzer = new ArrayAnalyzer(value);
@@ -227,12 +251,14 @@ namespace Polenter.Serialization.Serializing
 
                 property.Items.Add(new MultiDimensionalArrayItem(indexSet, itemProperty));
             }
-            return property;
+            return true;
         }
 
-        private Property createSingleDimensionalArrayProperty(string name, TypeInfo info, object value)
+        private bool fillSingleDimensionalArrayProperty(SingleDimensionalArrayProperty property, TypeInfo info, object value)
         {
-            var property = new SingleDimensionalArrayProperty(name, info.Type);
+            if (property == null)
+                return false;
+
             property.ElementType = info.ElementType;
 
             var analyzer = new ArrayAnalyzer(value);
@@ -249,7 +275,7 @@ namespace Polenter.Serialization.Serializing
                 property.Items.Add(itemProperty);
             }
 
-            return property;
+            return true;
         }
 
         private static Property createSimpleProperty(string name, TypeInfo typeInfo, object value)

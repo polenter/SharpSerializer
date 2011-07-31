@@ -136,6 +136,11 @@ namespace HelloWorldApp.BusinessObjects
         public ComplexObject ComplexObjectWithSelfReference { get; set; }
 
         /// <summary>
+        /// List wich contains itself in its items
+        /// </summary>
+        public List<object> ListWithSelfReference { get; set; }
+
+        /// <summary>
         /// Collection where item values are 
         /// derived from the collection item type
         /// </summary>
@@ -151,6 +156,11 @@ namespace HelloWorldApp.BusinessObjects
         /// from the prefedined dictionary value type
         /// </summary>
         public ComplexObjectPolymorphicDictionary ComplexObjectDictionary { get; set; }
+
+        /// <summary>
+        /// Dictionary containing properties and items which references itself
+        /// </summary>
+        public ComplexObjectExtendedDictionary ComplexObjectDictionaryWithSelfReference { get; set; }
 
         /// <summary>
         /// List items are derived from the generic attribute. 
@@ -219,6 +229,9 @@ namespace HelloWorldApp.BusinessObjects
 
             root.ComplexObjectWithSelfReference = new ComplexObject { SimpleInt = 794, Name = "Self-Referencing" };
             root.ComplexObjectWithSelfReference.OtherComplex = root.ComplexObjectWithSelfReference;
+
+            root.ListWithSelfReference = new List<object>();
+            root.ListWithSelfReference.Add(root.ListWithSelfReference);
             
             root.ComplexObjectCollection = new ComplexObjectPolymorphicCollection
                                                {new ComplexObject {SimpleInt = 11}, new ComplexObject {SimpleInt = 12}};
@@ -234,14 +247,19 @@ namespace HelloWorldApp.BusinessObjects
             root.ComplexObjectDictionary.Add(200, new ComplexObject {SimpleInt = 202});
             root.ComplexObjectDictionary.Add(300, null);
 
+            root.ComplexObjectDictionaryWithSelfReference = new ComplexObjectExtendedDictionary();
+            root.ComplexObjectDictionaryWithSelfReference.ReferenceObject =
+                root.ComplexObjectDictionaryWithSelfReference;
+            root.ComplexObjectDictionaryWithSelfReference.Add(44, root.ComplexObjectDictionaryWithSelfReference);
+
             root.GenericListOfComplexObjects = new List<IComplexObject> {new ComplexObject {SimpleInt = 303}};
             root.GenericObjectOfComplexObject = new GenericObject<IComplexObject>(new ComplexObject {SimpleInt = 12345});
 
             root.MultiArrayOfGenericObjectWithPolymorphicArgument = new GenericObject<IComplexObject>[1,1];
             root.MultiArrayOfGenericObjectWithPolymorphicArgument[0,0] = new GenericObject<IComplexObject>() {Data = new ComplexObject(){SimpleInt = 1357}};
 
-            // it contains objects of different types and a nested array
-            root.SingleArrayOfObjects = new object[] { 42, "nothing to say", false, BusinessObjects.SimpleEnum.Three, null, new object[] { 42, "nothing to say", false, BusinessObjects.SimpleEnum.Three, null } };
+            // it contains objects of different types, a nested array and a reference to another array
+            root.SingleArrayOfObjects = new object[] { 42, "nothing to say", false, BusinessObjects.SimpleEnum.Three, null, new object[] { 42, "nothing to say", false, BusinessObjects.SimpleEnum.Three, null }, root.MultiArrayOfGenericObjectWithPolymorphicArgument };
 
             return root;
         }

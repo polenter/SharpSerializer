@@ -111,6 +111,12 @@ namespace Polenter.Serialization.Advanced
         {
             writeStartProperty(Elements.MultiArray, property.Name, property.ValueType);
 
+            // additional attribute with referenceId
+            if (property.Property.Reference.Count > 1)
+            {
+                _writer.WriteAttribute(Attributes.ReferenceId, property.Property.Reference.Id);
+            }
+
             // DimensionInfos
             writeDimensionInfos(property.Property.DimensionInfos);
 
@@ -162,6 +168,12 @@ namespace Polenter.Serialization.Advanced
         {
             writeStartProperty(Elements.SingleArray, property.Name, property.ValueType);
 
+            // additional attribute with referenceId
+            if (property.Property.Reference.Count > 1)
+            {
+                _writer.WriteAttribute(Attributes.ReferenceId, property.Property.Reference.Id);
+            }
+
             // LowerBound
             if (property.Property.LowerBound != 0)
             {
@@ -196,6 +208,11 @@ namespace Polenter.Serialization.Advanced
         {
             writeStartProperty(Elements.Dictionary, property.Name, property.ValueType);
 
+            // additional attribute with referenceId
+            if (property.Property.Reference.Count > 1)
+            {
+                _writer.WriteAttribute(Attributes.ReferenceId, property.Property.Reference.Id);
+            }
 
             // Properties
             writeProperties(property.Property.Properties, property.Property.Type);
@@ -247,6 +264,12 @@ namespace Polenter.Serialization.Advanced
         {
             writeStartProperty(Elements.Collection, property.Name, property.ValueType);
 
+            // additional attribute with referenceId
+            if (property.Property.Reference.Count > 1)
+            {
+                _writer.WriteAttribute(Attributes.ReferenceId, property.Property.Reference.Id);
+            }
+
             // Properties
             writeProperties(property.Property.Properties, property.Property.Type);
 
@@ -293,34 +316,32 @@ namespace Polenter.Serialization.Advanced
         }
 
         /// <summary>
-        /// Serializes the complex reference property.
         /// </summary>
-        /// <param name = "property">Item to be serialized</param>
-        protected override void SerializeComplexReferenceProperty(PropertyTypeInfo<ComplexReferenceProperty> property)
-        {
-            writeStartProperty(Elements.ComplexObjectReference, property.Name, null);
-            _writer.WriteAttribute(Attributes.ComplexReferenceId, property.Property.ReferenceTarget.ComplexReferenceId);
-            writeEndProperty();
-        }
-
-        /// <summary>
-        /// Serializes a Complex (struct or class but not Enumerable or dictionary) property.
-        /// </summary>
-        /// <param name="property">Item to be serialized</param>
+        /// <param name = "property"></param>
         protected override void SerializeComplexProperty(PropertyTypeInfo<ComplexProperty> property)
         {
             writeStartProperty(Elements.ComplexObject, property.Name, property.ValueType);
 
-            // additional attribute complexReferenceId
-            int complexReferenceId = property.Property.ComplexReferenceId;
-            if (complexReferenceId != 0)
+            // additional attribute with referenceId
+            if (property.Property.Reference.Count>1)
             {
-                _writer.WriteAttribute(Attributes.ComplexReferenceId, complexReferenceId);
+                _writer.WriteAttribute(Attributes.ReferenceId, property.Property.Reference.Id);
             }
 
-            // SubProperties
+            // Properties
             writeProperties(property.Property.Properties, property.Property.Type);
 
+            writeEndProperty();
+        }
+
+        /// <summary>
+        /// Stores only reference to an object, not the object itself
+        /// </summary>
+        /// <param name="referenceTarget"></param>
+        protected override void SerializeReference(ReferenceTargetProperty referenceTarget)
+        {
+            writeStartProperty(Elements.Reference, referenceTarget.Name, null);
+            _writer.WriteAttribute(Attributes.ReferenceId, referenceTarget.Reference.Id);
             writeEndProperty();
         }
 

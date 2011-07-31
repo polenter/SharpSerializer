@@ -45,9 +45,10 @@ namespace Polenter.Serialization.Advanced
         private readonly IXmlReader _reader;
 
         /// <summary>
-        /// All complex item already processed. Used to for ComplexReference resolution.
+        /// All reference targets already processed. Used to for reference resolution.
         /// </summary>
-        private IDictionary<int, ComplexProperty> complexItems = new Dictionary<int, ComplexProperty>();
+        private readonly Dictionary<int, ReferenceTargetProperty> _propertyCache =
+            new Dictionary<int, ReferenceTargetProperty>();
 
         ///<summary>
         ///</summary>
@@ -78,12 +79,12 @@ namespace Polenter.Serialization.Advanced
             string elementName = _reader.ReadElement();
 
             // In what xml tag is the property saved
-            PropertyTag propertyTag = getPropertyTag(elementName);
+            PropertyArt propertyArt = getPropertyArtFromString(elementName);
 
             // check if the property was found
-            if (propertyTag == PropertyTag.Unknown) return null;
+            if (propertyArt == PropertyArt.Unknown) return null;
 
-            Property result = deserialize(propertyTag, null);
+            Property result = deserialize(propertyArt, null);
             return result;
         }
 
@@ -97,7 +98,7 @@ namespace Polenter.Serialization.Advanced
 
         #endregion
 
-        private Property deserialize(PropertyTag propertyTag, Type expectedType)
+        private Property deserialize(PropertyArt propertyArt, Type expectedType)
         {
             // Establish the property name
             string propertyName = _reader.GetAttributeAsString(Attributes.Name);
@@ -111,10 +112,8 @@ namespace Polenter.Serialization.Advanced
                 propertyType = expectedType;
             }
 
-            // create the property
-            Property property = createProperty(propertyTag, propertyName, propertyType);
-            if (property == null)
-                return null;
+            // create the property from the tag
+            Property property = Property.CreateInstance(propertyArt, propertyName, propertyType);
 
             // Null property?
             var nullProperty = property as NullProperty;
@@ -129,6 +128,36 @@ namespace Polenter.Serialization.Advanced
             {
                 parseSimpleProperty(_reader, simpleProperty);
                 return simpleProperty;
+            }
+
+            // This is not a null property and not a simple property
+            // it could be only ReferenceProperty or a reference
+
+            int referenceId = _reader.GetAttributeAsInt(Attributes.ReferenceId);
+
+            // Adding property to cache, it must be done before deserializing the object.
+            // Otherwise stack overflow occures if the object references itself
+            var referenceTarget = property as ReferenceTargetProperty;
+            if (referenceTarget != null && referenceId > 0)
+            {
+                referenceTarget.Reference = new ReferenceInfo() {Id = referenceId, IsProcessed = true};
+                _propertyCache.Add(referenceId, referenceTarget);
+            }
+
+            if (property==null)
+            {
+                // Property was not created yet, it can be created as a reference from its id
+                if (referenceId < 1)
+                    // there is no reference, so the property cannot be restored
+                    return null;
+
+                property = createProperty(referenceId, propertyName, propertyType);
+                if (property == null)
+                    // Reference was not created
+                    return null;
+
+                // property was successfully restored as a reference
+                return property;
             }
 
             var multiDimensionalArrayProperty = property as MultiDimensionalArrayProperty;
@@ -157,13 +186,6 @@ namespace Polenter.Serialization.Advanced
             {
                 parseCollectionProperty(collectionProperty);
                 return collectionProperty;
-            }
-
-            var complexReferenceProperty = property as ComplexReferenceProperty;
-            if (complexReferenceProperty != null)
-            {
-                parseComplexReferenceProperty(complexReferenceProperty);
-                return complexReferenceProperty;
             }
 
             var complexProperty = property as ComplexProperty;
@@ -244,8 +266,8 @@ namespace Polenter.Serialization.Advanced
                 if (keyProperty != null && valueProperty != null) break;
 
                 // check if valid tag was found
-                PropertyTag propertyTag = getPropertyTag(subElement);
-                if (propertyTag == PropertyTag.Unknown) continue;
+                PropertyArt propertyArt = getPropertyArtFromString(subElement);
+                if (propertyArt == PropertyArt.Unknown) continue;
 
                 // items are as pair key-value defined
 
@@ -253,12 +275,12 @@ namespace Polenter.Serialization.Advanced
                 if (keyProperty == null)
                 {
                     // Key was not defined yet (the first item was found)
-                    keyProperty = deserialize(propertyTag, expectedKeyType);
+                    keyProperty = deserialize(propertyArt, expectedKeyType);
                     continue;
                 }
 
                 // key was defined (the second item was found)
-                valueProperty = deserialize(propertyTag, expectedValueType);
+                valueProperty = deserialize(propertyArt, expectedValueType);
             }
 
             // create the item
@@ -302,10 +324,10 @@ namespace Polenter.Serialization.Advanced
             int[] indexes = _reader.GetAttributeAsArrayOfInt(Attributes.Indexes);
             foreach (string subElement in _reader.ReadSubElements())
             {
-                PropertyTag propertyTag = getPropertyTag(subElement);
-                if (propertyTag == PropertyTag.Unknown) continue;
+                PropertyArt propertyArt = getPropertyArtFromString(subElement);
+                if (propertyArt == PropertyArt.Unknown) continue;
 
-                Property value = deserialize(propertyTag, expectedElementType);
+                Property value = deserialize(propertyArt, expectedElementType);
                 var item = new MultiDimensionalArrayItem(indexes, value);
                 items.Add(item);
             }
@@ -352,41 +374,18 @@ namespace Polenter.Serialization.Advanced
         {
             foreach (string subElement in _reader.ReadSubElements())
             {
-                PropertyTag propertyTag = getPropertyTag(subElement);
-                if (propertyTag != PropertyTag.Unknown)
+                PropertyArt propertyArt = getPropertyArtFromString(subElement);
+                if (propertyArt != PropertyArt.Unknown)
                 {
                     // Property is found
-                    Property subProperty = deserialize(propertyTag, expectedElementType);
+                    Property subProperty = deserialize(propertyArt, expectedElementType);
                     items.Add(subProperty);
                 }
             }
         }
 
-        private void parseComplexReferenceProperty(ComplexReferenceProperty property)
-        {
-            int complexReferenceId = _reader.GetAttributeAsInt(Attributes.ComplexReferenceId);
-            ComplexProperty target;
-            if (complexItems.TryGetValue(complexReferenceId, out target))
-                property.ReferenceTarget = target;
-            else
-            {
-                string message = string.Format("{0}-parser : Cannot find <{6} {4}='{5}'/>  when resolving <{1} {2} ='{3}' {4}='{5}'/>", 
-                    GetType().Name,
-                    Elements.ComplexObjectReference, 
-                    Attributes.Name, property.Name,
-                    Attributes.ComplexReferenceId, complexReferenceId,
-                    Elements.ComplexObject);
-                throw new FormatException(message);
-            }
-        }
-
         private void parseComplexProperty(ComplexProperty property)
         {
-            property.ComplexReferenceId = _reader.GetAttributeAsInt(Attributes.ComplexReferenceId);
-
-            // remember for later resolution
-            if (property.IsReferencedMoreThanOnce)
-                complexItems.Add(property.ComplexReferenceId, property);
 
             foreach (string subElement in _reader.ReadSubElements())
             {
@@ -401,8 +400,8 @@ namespace Polenter.Serialization.Advanced
         {
             foreach (string subElement in _reader.ReadSubElements())
             {
-                PropertyTag propertyTag = getPropertyTag(subElement);
-                if (propertyTag != PropertyTag.Unknown)
+                PropertyArt propertyArt = getPropertyArtFromString(subElement);
+                if (propertyArt != PropertyArt.Unknown)
                 {
                     // check if the property with the name exists
                     string subPropertyName = _reader.GetAttributeAsString(Attributes.Name);
@@ -411,7 +410,7 @@ namespace Polenter.Serialization.Advanced
                     // estimating the propertyInfo
                     PropertyInfo subPropertyInfo = ownerType.GetProperty(subPropertyName);
 
-                    Property subProperty = deserialize(propertyTag, subPropertyInfo.PropertyType);
+                    Property subProperty = deserialize(propertyArt, subPropertyInfo.PropertyType);
                     properties.Add(subProperty);
                 }
             }
@@ -422,60 +421,32 @@ namespace Polenter.Serialization.Advanced
             property.Value = _reader.GetAttributeAsObject(Attributes.Value, property.Type);
         }
 
-        private static Property createProperty(PropertyTag tag, string propertyName, Type propertyType)
+        private Property createProperty(int referenceId, string propertyName, Type propertyType)
         {
-            switch (tag)
-            {
-                case PropertyTag.Simple:
-                    return new SimpleProperty(propertyName, propertyType);
-                case PropertyTag.Complex:
-                    return new ComplexProperty(propertyName, propertyType);
-                case PropertyTag.ComplexReference:
-                    return new ComplexReferenceProperty(propertyName);
-                case PropertyTag.Collection:
-                    return new CollectionProperty(propertyName, propertyType);
-                case PropertyTag.Dictionary:
-                    return new DictionaryProperty(propertyName, propertyType);
-                case PropertyTag.SingleArray:
-                    return new SingleDimensionalArrayProperty(propertyName, propertyType);
-                case PropertyTag.MultiArray:
-                    return new MultiDimensionalArrayProperty(propertyName, propertyType);
-                case PropertyTag.Null:
-                    return new NullProperty(propertyName);
-                default:
-                    return null;
-            }
+            var cachedProperty = _propertyCache[referenceId];
+            var property = (ReferenceTargetProperty)Property.CreateInstance(cachedProperty.Art, propertyName, propertyType);
+            cachedProperty.Reference.Count++;
+            property.MakeFlatCopyFrom(cachedProperty);
+            // Reference must be recreated, cause IsProcessed differs for reference and the full property
+            property.Reference = new ReferenceInfo() {Id = referenceId};
+            return property;
         }
 
-        private static PropertyTag getPropertyTag(string name)
+        private static PropertyArt getPropertyArtFromString(string name)
         {
-            if (name == Elements.SimpleObject) return PropertyTag.Simple;
-            if (name == Elements.ComplexObject) return PropertyTag.Complex;
-            if (name == Elements.Collection) return PropertyTag.Collection;
-            if (name == Elements.SingleArray) return PropertyTag.SingleArray;
-            if (name == Elements.Null) return PropertyTag.Null;
-            if (name == Elements.Dictionary) return PropertyTag.Dictionary;
-            if (name == Elements.MultiArray) return PropertyTag.MultiArray;
-            if (name == Elements.ComplexObjectReference) return PropertyTag.ComplexReference;
+            if (name == Elements.SimpleObject) return PropertyArt.Simple;
+            if (name == Elements.ComplexObject) return PropertyArt.Complex;
+            if (name == Elements.Collection) return PropertyArt.Collection;
+            if (name == Elements.SingleArray) return PropertyArt.SingleDimensionalArray;
+            if (name == Elements.Null) return PropertyArt.Null;
+            if (name == Elements.Dictionary) return PropertyArt.Dictionary;
+            if (name == Elements.MultiArray) return PropertyArt.MultiDimensionalArray;
+            // is used only for backward compatibility
+            if (name == Elements.OldReference) return PropertyArt.Reference;
+            // is used since the v.2.12
+            if (name == Elements.Reference) return PropertyArt.Reference;
 
-            return PropertyTag.Unknown;
+            return PropertyArt.Unknown;
         }
-
-        #region Nested type: PropertyTag
-
-        private enum PropertyTag
-        {
-            Unknown = 0,
-            Simple,
-            Complex,
-            Collection,
-            Dictionary,
-            SingleArray,
-            MultiArray,
-            Null,
-            ComplexReference
-        }
-
-        #endregion
     }
 }

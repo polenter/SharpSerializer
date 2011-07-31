@@ -26,6 +26,8 @@
 
 #endregion
 
+using System;
+
 namespace Polenter.Serialization.Core.Xml
 {
     /// <summary>
@@ -43,8 +45,13 @@ namespace Polenter.Serialization.Core.Xml
 
         ///<summary>
         /// internal used as an id for referencing already serialized items
+        /// Since v.2.12 Elements.Reference is used instead.
         ///</summary>
-        public const string ComplexObjectReference = "ComplexReference";
+        public const string OldReference = "ComplexReference";
+        ///<summary>
+        /// used as an id for referencing already serialized items
+        ///</summary>
+        public const string Reference = "Reference";
 
         ///<summary>
         ///</summary>
@@ -139,8 +146,8 @@ namespace Polenter.Serialization.Core.Xml
         public const string ValueType = "valueType";
 
         ///<summary>
-        /// internal used as an id to identify and refere already serialized items
+        /// used as an id to identify and refere already serialized items
         ///</summary>
-        public const string ComplexReferenceId = "id";
+        public const string ReferenceId = "id";
     }
 }

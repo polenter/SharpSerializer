@@ -18,5 +18,8 @@ namespace HelloWorldApp.BusinessObjects
 
     public class ComplexObjectPolymorphicDictionary : Dictionary<int, IComplexObject>{}
 
-    public class ComplexObjectDictionary : Dictionary<int, ComplexObject>{}
+    public class ComplexObjectExtendedDictionary : Dictionary<int, ComplexObjectExtendedDictionary>
+    {
+        public object ReferenceObject { get; set; }
+    }
 }
