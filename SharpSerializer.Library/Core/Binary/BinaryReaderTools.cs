@@ -131,6 +131,13 @@ namespace Polenter.Serialization.Core.Binary
                 // Enumeration
                 if (type.IsEnum) return readEnumeration(type, reader);
 
+                // Type
+                if (isType(type))
+                {
+                    var typeName = reader.ReadString();
+                    return Type.GetType(typeName, true);
+                }
+
                 throw new InvalidOperationException(string.Format("Unknown simple type: {0}", type.FullName));
             }
             catch (Exception ex)
@@ -138,6 +145,11 @@ namespace Polenter.Serialization.Core.Binary
                 throw new SimpleValueParsingException(
                     string.Format("Invalid type: {0}. See details in the inner exception.", type), ex);
             }
+        }
+
+        private static bool isType(Type type)
+        {
+            return type == typeof (Type) || type.IsSubclassOf(typeof (Type));
         }
 
         private static object readEnumeration(Type expectedType, BinaryReader reader)

@@ -227,7 +227,19 @@ namespace Polenter.Serialization.Core.Binary
                 return;
             }
 
+            // Type
+            if (isType(type))
+            {
+                writer.Write(((Type)value).AssemblyQualifiedName);
+                return;
+            }
+
             throw new InvalidOperationException(string.Format("Unknown simple type: {0}", type.FullName));
+        }
+
+        private static bool isType(Type type)
+        {
+            return type == typeof(Type) || type.IsSubclassOf(typeof(Type));
         }
 
         private static void writeArrayOfByte(byte[] data, BinaryWriter writer)
