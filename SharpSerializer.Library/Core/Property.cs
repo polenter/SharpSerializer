@@ -61,6 +61,142 @@ namespace Polenter.Serialization.Core
         ///   If the properties are nested, i.e. collection items are nested in the collection
         /// </summary>
         public Property Parent { get; set; }
+
+        ///<summary>
+        /// Of what art is the property.
+        ///</summary>
+        public PropertyArt Art { get { return GetPropertyArt(); } }
+
+        /// <summary>
+        /// Gets the property art.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract PropertyArt GetPropertyArt();
+
+        ///<summary>
+        /// Creates property from PropertyArt
+        ///</summary>
+        ///<param name="art"></param>
+        ///<param name="propertyName"></param>
+        ///<param name="propertyType"></param>
+        ///<returns>null if PropertyArt.Reference is requested</returns>
+        ///<exception cref="InvalidOperationException">If unknown PropertyArt requested</exception>
+        public static Property CreateInstance(PropertyArt art, string propertyName, Type propertyType)
+        {
+            switch (art)
+            {
+                case PropertyArt.Collection:
+                    return new CollectionProperty(propertyName, propertyType);
+                case PropertyArt.Complex:
+                    return new ComplexProperty(propertyName, propertyType);
+                case PropertyArt.Dictionary:
+                    return new DictionaryProperty(propertyName, propertyType);
+                case PropertyArt.MultiDimensionalArray:
+                    return new MultiDimensionalArrayProperty(propertyName, propertyType);
+                case PropertyArt.Null:
+                    return new NullProperty(propertyName);
+                case PropertyArt.Reference:
+                    return null;
+                case PropertyArt.Simple:
+                    return new SimpleProperty(propertyName, propertyType);
+                case PropertyArt.SingleDimensionalArray:
+                    return new SingleDimensionalArrayProperty(propertyName, propertyType);
+                default:
+                    throw new InvalidOperationException(string.Format("Unknown PropertyArt {0}", art));
+            }
+        }
+
+
+        ///<summary>
+        ///</summary>
+        ///<returns></returns>
+        ///<exception cref="NotImplementedException"></exception>
+        public override string ToString()
+        {
+            string name = Name ?? "null";
+            string type = Type == null ? "null" : Type.Name;
+            string parent = Parent == null ? "null" : Parent.GetType().Name;            
+            return string.Format("{0}, Name={1}, Type={2}, Parent={3}", GetType().Name, name, type, parent);
+        }
+    }
+
+    ///<summary>
+    /// All properties derived from this property can be a target of a reference
+    ///</summary>
+    public abstract class ReferenceTargetProperty : Property
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        protected ReferenceTargetProperty(string name, Type type) : base(name, type)
+        {
+        }
+
+        ///<summary>
+        /// Information about the References for this property
+        ///</summary>
+        public ReferenceInfo Reference { get; set; }
+
+        ///<summary>
+        /// Makes flat copy (only references) of vital properties
+        ///</summary>
+        ///<param name="source"></param>
+        public virtual void MakeFlatCopyFrom(ReferenceTargetProperty source)
+        {
+            Reference = source.Reference;
+        }
+
+        ///<summary>
+        ///</summary>
+        ///<returns></returns>
+        ///<exception cref="NotImplementedException"></exception>
+        public override string ToString()
+        {
+            var text = base.ToString();
+            string reference = Reference != null ? Reference.ToString() : "null";
+            return string.Format("{0}, Reference={1}", text, reference);
+        }
+    }
+
+    ///<summary>
+    /// Provides information about property references
+    ///</summary>
+    public sealed class ReferenceInfo
+    {
+        ///<summary>
+        ///</summary>
+        public ReferenceInfo()
+        {
+            Count = 1;
+        }
+
+        ///<summary>
+        /// How many references to the same object
+        ///</summary>
+        public int Count { get; set; }
+
+        ///<summary>
+        /// Every Object must have a unique Id
+        ///</summary>
+        public int Id { get; set; }
+
+        ///<summary>
+        /// During serialization is true if the target object was already serialized.
+        /// Then the target must not be serialized again. Only its reference must be created.
+        /// During deserialization it means, the target object was parsed and read
+        /// from the stream. It can be further used to resolve its references.
+        ///</summary>
+        public bool IsProcessed { get; set; }
+
+        ///<summary>
+        ///</summary>
+        ///<returns></returns>
+        public override string ToString()
+        {
+            return string.Format("{0}, Count={1}, Id={2}, IsProcessed={3}", GetType().Name, Count, Id, IsProcessed);
+        }
     }
 
     /// <summary>
@@ -80,6 +216,15 @@ namespace Polenter.Serialization.Core
         public NullProperty(string name)
             : base(name, null)
         {
+        }
+
+        /// <summary>
+        /// Gets the property art.
+        /// </summary>
+        /// <returns></returns>
+        protected override PropertyArt GetPropertyArt()
+        {
+            return PropertyArt.Null;
         }
     }
 
@@ -160,6 +305,15 @@ namespace Polenter.Serialization.Core
         ///</summary>
         public object Value { get; set; }
 
+        /// <summary>
+        /// Gets the property art.
+        /// </summary>
+        /// <returns></returns>
+        protected override PropertyArt GetPropertyArt()
+        {
+            return PropertyArt.Simple;
+        }
+
         ///<summary>
         ///</summary>
         ///<returns></returns>
@@ -175,58 +329,20 @@ namespace Polenter.Serialization.Core
     /// <summary>
     ///   Represents complex type which contains properties.
     /// </summary>
-    public class ComplexProperty : Property
+    public class ComplexProperty : ReferenceTargetProperty
     {
         private PropertyCollection _properties;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ComplexProperty"/> class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="type">The type.</param>
-        /// <param name="value">The value.</param>
-        public ComplexProperty(string name, Type type, object value)
+        ///<summary>
+        ///</summary>
+        ///<param name = "name"></param>
+        ///<param name = "type"></param>
+        public ComplexProperty(string name, Type type)
             : base(name, type)
         {
-            this.Value = value;
-            this.ComplexReferenceId = 0; // assume it is not recursive (yet)
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ComplexProperty"/> class.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="type"></param>
-        public ComplexProperty(string name, System.Type type)
-            : this(name, type, null)
-        {
         }
 
         ///<summary>
-        ///  The actual complex object.
-        ///  On Serialisation used to find out if object was serialized before
-        ///</summary>
-        public object Value { get; set; }
-
-        /// <summary>
-        /// [Get or Set] If not 0, this is an Item that is used more than once. 
-        /// </summary>
-        /// <value>The recursion id.</value>
-        public int ComplexReferenceId { get; set; }
-
-        /// <summary>
-        /// [Gets] True if this property is referenced more than once.
-        /// </summary>
-        public bool IsReferencedMoreThanOnce
-        {
-            get
-            {
-                return ComplexReferenceId != 0;
-            }
-        }
-
-        ///<summary>
-        /// Sub properties
         ///</summary>
         public PropertyCollection Properties
         {
@@ -237,36 +353,32 @@ namespace Polenter.Serialization.Core
             }
             set { _properties = value; }
         }
-    }
 
-    /// <summary>
-    ///   Represents complex type via a reference of an other complex type.
-    /// </summary>
-    public class ComplexReferenceProperty : Property
-    {
-        /// <summary>
-        /// [Get, Set} where this is pointing to.
-        /// </summary>
-        public ComplexProperty ReferenceTarget  { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ComplexReferenceProperty"/> class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="referenceTarget">The reference target.</param>
-        public ComplexReferenceProperty(string name, ComplexProperty referenceTarget)
-            : base(name, null)
+        ///<summary>
+        /// Makes flat copy (only references) of vital properties
+        ///</summary>
+        ///<param name="source"></param>
+        public override void MakeFlatCopyFrom(ReferenceTargetProperty source)
         {
-            this.ReferenceTarget = referenceTarget;
+            var complexProperty = source as ComplexProperty;
+            if (complexProperty == null)
+                throw new InvalidCastException(
+                    string.Format("Invalid property type to make a flat copy. Expected {0}, current {1}",
+                                  typeof(ComplexProperty), source.GetType()));
+
+            base.MakeFlatCopyFrom(source);
+
+            Properties = complexProperty.Properties;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ComplexReferenceProperty"/> class.
+        /// Gets the property art.
         /// </summary>
-        /// <param name="name">The name.</param>
-        public ComplexReferenceProperty(string name)
-            : this(name, null)
+        /// <returns></returns>
+        protected override PropertyArt GetPropertyArt()
         {
+            return PropertyArt.Complex;
         }
     }
 
@@ -302,6 +414,33 @@ namespace Polenter.Serialization.Core
         ///   Of what type are items. It's important for polymorphic collection
         /// </summary>
         public Type ElementType { get; set; }
+
+        ///<summary>
+        /// Makes flat copy (only references) of vital properties
+        ///</summary>
+        ///<param name="source"></param>
+        public override void MakeFlatCopyFrom(ReferenceTargetProperty source)
+        {
+            var collectionSource = source as CollectionProperty;
+            if (collectionSource == null)
+                throw new InvalidCastException(
+                    string.Format("Invalid property type to make a flat copy. Expected {0}, current {1}",
+                                  typeof(CollectionProperty), source.GetType()));
+
+            base.MakeFlatCopyFrom(source);
+
+            ElementType = collectionSource.ElementType;
+            Items = collectionSource.Items;
+        }
+
+        /// <summary>
+        /// Gets the property art.
+        /// </summary>
+        /// <returns></returns>
+        protected override PropertyArt GetPropertyArt()
+        {
+            return PropertyArt.Collection;
+        }
     }
 
 
@@ -342,12 +481,40 @@ namespace Polenter.Serialization.Core
         ///   Of what type are values
         /// </summary>
         public Type ValueType { get; set; }
+
+        ///<summary>
+        /// Makes flat copy (only references) of vital properties
+        ///</summary>
+        ///<param name="source"></param>
+        public override void MakeFlatCopyFrom(ReferenceTargetProperty source)
+        {
+            var dictionarySource = source as DictionaryProperty;
+            if (dictionarySource == null)
+                throw new InvalidCastException(
+                    string.Format("Invalid property type to make a flat copy. Expected {0}, current {1}",
+                                  typeof(DictionaryProperty), source.GetType()));
+
+            base.MakeFlatCopyFrom(source);
+
+            KeyType = dictionarySource.KeyType;
+            ValueType = dictionarySource.ValueType;
+            Items = dictionarySource.Items;
+        }
+
+        /// <summary>
+        /// Gets the property art.
+        /// </summary>
+        /// <returns></returns>
+        protected override PropertyArt GetPropertyArt()
+        {
+            return PropertyArt.Dictionary;
+        }
     }
 
     /// <summary>
     ///   Represents one dimensional array
     /// </summary>
-    public sealed class SingleDimensionalArrayProperty : Property
+    public sealed class SingleDimensionalArrayProperty : ReferenceTargetProperty
     {
         private PropertyCollection _items;
 
@@ -381,12 +548,41 @@ namespace Polenter.Serialization.Core
         ///   Of what type are elements
         /// </summary>
         public Type ElementType { get; set; }
+
+
+        ///<summary>
+        /// Makes flat copy (only references) of vital properties
+        ///</summary>
+        ///<param name="source"></param>
+        public override void MakeFlatCopyFrom(ReferenceTargetProperty source)
+        {
+            var arrayProp = source as SingleDimensionalArrayProperty;
+            if (arrayProp == null)
+                throw new InvalidCastException(
+                    string.Format("Invalid property type to make a flat copy. Expected {0}, current {1}",
+                                  typeof(SingleDimensionalArrayProperty), source.GetType()));
+
+            base.MakeFlatCopyFrom(source);
+
+            LowerBound = arrayProp.LowerBound;
+            ElementType = arrayProp.ElementType;
+            Items = arrayProp.Items;
+        }
+
+        /// <summary>
+        /// Gets the property art.
+        /// </summary>
+        /// <returns></returns>
+        protected override PropertyArt GetPropertyArt()
+        {
+            return PropertyArt.SingleDimensionalArray;
+        }
     }
 
     /// <summary>
     ///   Represents multidimensional array. Array properties are in DimensionInfos
     /// </summary>
-    public sealed class MultiDimensionalArrayProperty : Property
+    public sealed class MultiDimensionalArrayProperty : ReferenceTargetProperty
     {
         private IList<DimensionInfo> _dimensionInfos;
         private IList<MultiDimensionalArrayItem> _items;
@@ -429,6 +625,34 @@ namespace Polenter.Serialization.Core
         ///   Of what type are elements. All elements in all all dimensions must be inheritors of this type.
         /// </summary>
         public Type ElementType { get; set; }
+
+        ///<summary>
+        /// Makes flat copy (only references) of vital properties
+        ///</summary>
+        ///<param name="source"></param>
+        public override void MakeFlatCopyFrom(ReferenceTargetProperty source)
+        {
+            var arrayProp = source as MultiDimensionalArrayProperty;
+            if (arrayProp == null)
+                throw new InvalidCastException(
+                    string.Format("Invalid property type to make a flat copy. Expected {0}, current {1}",
+                                  typeof(SingleDimensionalArrayProperty), source.GetType()));
+
+            base.MakeFlatCopyFrom(source);
+
+            ElementType = arrayProp.ElementType;
+            DimensionInfos = arrayProp.DimensionInfos;
+            Items = arrayProp.Items;
+        }
+
+        /// <summary>
+        /// Gets the property art.
+        /// </summary>
+        /// <returns></returns>
+        protected override PropertyArt GetPropertyArt()
+        {
+            return PropertyArt.MultiDimensionalArray;
+        }
     }
 
     /// <summary>
@@ -498,5 +722,39 @@ namespace Polenter.Serialization.Core
         ///   Represents value. There can be everything
         /// </summary>
         public Property Value { get; set; }
+    }
+
+    ///<summary>
+    /// Of what art is the property
+    ///</summary>
+    public enum PropertyArt
+    {
+        ///<summary>
+        ///</summary>
+        Unknown = 0,
+        ///<summary>
+        ///</summary>
+        Simple,
+        ///<summary>
+        ///</summary>
+        Complex,
+        ///<summary>
+        ///</summary>
+        Collection,
+        ///<summary>
+        ///</summary>
+        Dictionary,
+        ///<summary>
+        ///</summary>
+        SingleDimensionalArray,
+        ///<summary>
+        ///</summary>
+        MultiDimensionalArray,
+        ///<summary>
+        ///</summary>
+        Null,
+        ///<summary>
+        ///</summary>
+        Reference
     }
 }

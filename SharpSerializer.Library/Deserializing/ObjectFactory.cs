@@ -41,6 +41,11 @@ namespace Polenter.Serialization.Deserializing
         private readonly object[] _emptyObjectArray = new object[0];
 
         /// <summary>
+        /// Contains already created objects. Is used for reference resolving.
+        /// </summary>
+        private readonly Dictionary<int, object > _objectCache = new Dictionary<int, object>();
+
+        /// <summary>
         ///   Builds object from property
         /// </summary>
         /// <param name = "property"></param>
@@ -54,13 +59,6 @@ namespace Polenter.Serialization.Deserializing
             if (nullProperty != null)
             {
                 return null;
-            }
-
-            // Is it ComplexReferenceProperty?
-            var complexReferenceProperty = property as ComplexReferenceProperty;
-            if (complexReferenceProperty != null)
-            {
-                return createObjectFromComplexReferenceProperty(complexReferenceProperty);
             }
 
             if (property.Type == null)
@@ -77,6 +75,30 @@ namespace Polenter.Serialization.Deserializing
                 return createObjectFromSimpleProperty(simpleProperty);
             }
 
+            var referenceTarget = property as ReferenceTargetProperty;
+            if (referenceTarget == null)
+                return null;
+
+            if (referenceTarget.Reference != null)
+            {
+                if (!referenceTarget.Reference.IsProcessed)
+                {
+                    // object was created already
+                    // get object from cache
+                    return _objectCache[referenceTarget.Reference.Id];                    
+                }
+            }
+
+            object value = createObjectCore(referenceTarget);
+            if (value != null)
+                return value;
+
+            // No idea what it is
+            throw new InvalidOperationException(string.Format("Unknown Property type: {0}", property.GetType().Name));                
+        }
+
+        private object createObjectCore(ReferenceTargetProperty property)
+        {
             // Is it multidimensional array?
             var multiDimensionalArrayProperty = property as MultiDimensionalArrayProperty;
             if (multiDimensionalArrayProperty != null)
@@ -112,8 +134,7 @@ namespace Polenter.Serialization.Deserializing
                 return createObjectFromComplexProperty(complexProperty);
             }
 
-            // No idea what it is
-            throw new InvalidOperationException(string.Format("Unknown Property type: {0}", property.GetType().Name));
+            return null;
         }
 
         private static object createObjectFromSimpleProperty(SimpleProperty property)
@@ -124,24 +145,33 @@ namespace Polenter.Serialization.Deserializing
         private object createObjectFromComplexProperty(ComplexProperty property)
         {
             object obj = Tools.CreateInstance(property.Type);
-            property.Value = obj; // remember if there is a reference to this item to be resolved
+
+            if (property.Reference != null)
+            {
+                // property has Reference, only objects referenced multiple times
+                // have properties with references. Object must be cached to
+                // resolve its references in the future.
+                _objectCache.Add(property.Reference.Id, obj);
+            }
 
             fillProperties(obj, property.Properties);
 
             return obj;
         }
 
-        private object createObjectFromComplexReferenceProperty(ComplexReferenceProperty property)
-        {
-            object obj = property.ReferenceTarget.Value;
-            System.Diagnostics.Debug.Assert(obj != null, "ReferenceTarget.Value should already have been created");
-            return obj;
-        }
 
         private object createObjectFromCollectionProperty(CollectionProperty property)
         {
             Type type = property.Type;
             object collection = Tools.CreateInstance(type);
+
+            if (property.Reference != null)
+            {
+                // property has Reference, only objects referenced multiple times
+                // have properties with references. Object must be cached to
+                // resolve its references in the future.
+                _objectCache.Add(property.Reference.Id, collection);
+            }
 
             // fill the properties
             fillProperties(collection, property.Properties);
@@ -171,6 +201,14 @@ namespace Polenter.Serialization.Deserializing
         private object createObjectFromDictionaryProperty(DictionaryProperty property)
         {
             object dictionary = Tools.CreateInstance(property.Type);
+
+            if (property.Reference != null)
+            {
+                // property has Reference, only objects referenced multiple times
+                // have properties with references. Object must be cached to
+                // resolve its references in the future.
+                _objectCache.Add(property.Reference.Id, dictionary);
+            }
 
             // fill the properties
             fillProperties(dictionary, property.Properties);
@@ -221,6 +259,14 @@ namespace Polenter.Serialization.Deserializing
 
             Array array = createArrayInstance(property.ElementType, new[] {itemsCount}, new[] {property.LowerBound});
 
+            if (property.Reference != null)
+            {
+                // property has Reference, only objects referenced multiple times
+                // have properties with references. Object must be cached to
+                // resolve its references in the future.
+                _objectCache.Add(property.Reference.Id, array);
+            }
+
             // Items
             for (int index = property.LowerBound; index < property.LowerBound + itemsCount; index++)
             {
@@ -243,6 +289,14 @@ namespace Polenter.Serialization.Deserializing
 
             // Instantiating the array
             Array array = createArrayInstance(property.ElementType, creatingInfo.Lengths, creatingInfo.LowerBounds);
+
+            if (property.Reference != null)
+            {
+                // property has Reference, only objects referenced multiple times
+                // have properties with references. Object must be cached to
+                // resolve its references in the future.
+                _objectCache.Add(property.Reference.Id, array);
+            }
 
             // fill the values
             foreach (MultiDimensionalArrayItem item in property.Items)

@@ -71,7 +71,42 @@ namespace Polenter.Serialization.Core.Binary
         ///<summary>
         /// reference to previosly serialized  ComplexObjectWithId
         ///</summary>
-        public const byte ComplexObjectReference = 9;
+        public const byte Reference = 9;
+
+        ///<summary>
+        ///</summary>
+        public const byte CollectionWithId = 10;
+
+        ///<summary>
+        ///</summary>
+        public const byte DictionaryWithId = 11;
+
+        ///<summary>
+        ///</summary>
+        public const byte SingleArrayWithId = 12;
+
+        ///<summary>
+        ///</summary>
+        public const byte MultiArrayWithId = 13;
+
+        ///<summary>
+        ///</summary>
+        ///<param name="elementId"></param>
+        ///<returns></returns>
+        public static bool IsElementWithId(byte elementId)
+        {
+            if (elementId == ComplexObjectWithId)
+                return true;
+            if (elementId == CollectionWithId)
+                return true;
+            if (elementId == DictionaryWithId)
+                return true;
+            if (elementId == SingleArrayWithId)
+                return true;
+            if (elementId == MultiArrayWithId)
+                return true;
+            return false;
+        }
     }
 
     /// <summary>

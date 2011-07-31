@@ -94,63 +94,96 @@ namespace Polenter.Serialization.Advanced.Serializing
                 return;
             }
 
+            var referenceTarget = property.Property as ReferenceTargetProperty;
+            if (referenceTarget != null)
+            {
+                if (serializeReference(referenceTarget))
+                    // Reference to object was serialized
+                    return;
+
+                // Full Serializing of the object
+                if (serializeReferenceTarget(new PropertyTypeInfo<ReferenceTargetProperty>(referenceTarget,
+                                                                                       property.ExpectedPropertyType,
+                                                                                       property.ValueType)))
+                {                    
+                    return;
+                }
+            }
+
+            throw new InvalidOperationException(string.Format("Unknown Property: {0}", property.Property.GetType()));            
+        }
+
+        private bool serializeReferenceTarget(PropertyTypeInfo<ReferenceTargetProperty> property)
+        {
             var multiDimensionalArrayProperty = property.Property as MultiDimensionalArrayProperty;
             if (multiDimensionalArrayProperty != null)
             {
+                multiDimensionalArrayProperty.Reference.IsProcessed = true;
                 SerializeMultiDimensionalArrayProperty(
                     new PropertyTypeInfo<MultiDimensionalArrayProperty>(multiDimensionalArrayProperty,
                                                                         property.ExpectedPropertyType,
                                                                         property.ValueType));
-                return;
+                return true;
             }
 
             var singleDimensionalArrayProperty = property.Property as SingleDimensionalArrayProperty;
             if (singleDimensionalArrayProperty != null)
             {
+                singleDimensionalArrayProperty.Reference.IsProcessed = true;
                 SerializeSingleDimensionalArrayProperty(
                     new PropertyTypeInfo<SingleDimensionalArrayProperty>(singleDimensionalArrayProperty,
                                                                          property.ExpectedPropertyType,
                                                                          property.ValueType));
-                return;
+                return true;
             }
 
             var dictionaryProperty = property.Property as DictionaryProperty;
             if (dictionaryProperty != null)
             {
+                dictionaryProperty.Reference.IsProcessed = true;
                 SerializeDictionaryProperty(new PropertyTypeInfo<DictionaryProperty>(dictionaryProperty,
                                                                                      property.ExpectedPropertyType,
                                                                                      property.ValueType));
-                return;
+                return true;
             }
 
             var collectionProperty = property.Property as CollectionProperty;
             if (collectionProperty != null)
             {
+                collectionProperty.Reference.IsProcessed = true;
                 SerializeCollectionProperty(new PropertyTypeInfo<CollectionProperty>(collectionProperty,
                                                                                      property.ExpectedPropertyType,
                                                                                      property.ValueType));
-                return;
+                return true;
             }
 
             var complexProperty = property.Property as ComplexProperty;
             if (complexProperty != null)
             {
+                complexProperty.Reference.IsProcessed = true;
                 SerializeComplexProperty(new PropertyTypeInfo<ComplexProperty>(complexProperty,
                                                                                property.ExpectedPropertyType,
                                                                                property.ValueType));
-                return;
+                return true;
             }
 
-            var complexReferenceProperty = property.Property as ComplexReferenceProperty;
-            if (complexReferenceProperty != null)
+            return false;
+        }
+
+        private bool serializeReference(ReferenceTargetProperty property)
+        {
+            if (property.Reference.Count > 1)
             {
-                SerializeComplexReferenceProperty(new PropertyTypeInfo<ComplexReferenceProperty>(complexReferenceProperty,
-                                                                               null,
-                                                                               null));
-                return;
+                // There are more references to this object
+                if (property.Reference.IsProcessed)
+                {
+                    // The object is already serialized
+                    // Only its reference should be stored
+                    SerializeReference(property);
+                    return true;
+                }
             }
-
-            throw new InvalidOperationException(string.Format("Unknown Property: {0}", property.Property.GetType()));
+            return false;
         }
 
         /// <summary>
@@ -186,15 +219,14 @@ namespace Polenter.Serialization.Advanced.Serializing
         protected abstract void SerializeCollectionProperty(PropertyTypeInfo<CollectionProperty> property);
 
         /// <summary>
-        /// Serializes a Complex (struct or class but not Enumerable or dictionary) property.
         /// </summary>
-        /// <param name = "property">Item to be serialized</param>
+        /// <param name = "property"></param>
         protected abstract void SerializeComplexProperty(PropertyTypeInfo<ComplexProperty> property);
 
         /// <summary>
-        /// Serializes a ComplexReference property (2nd or later occurrence of a complex property).
+        /// 
         /// </summary>
-        /// <param name = "property">Item to be serialized</param>
-        protected abstract void SerializeComplexReferenceProperty(PropertyTypeInfo<ComplexReferenceProperty> property);
+        /// <param name="referenceTarget"></param>
+        protected abstract void SerializeReference(ReferenceTargetProperty referenceTarget);
     }
 }

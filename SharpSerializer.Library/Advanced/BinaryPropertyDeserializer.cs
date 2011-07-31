@@ -46,9 +46,10 @@ namespace Polenter.Serialization.Advanced
         private readonly IBinaryReader _reader;
 
         /// <summary>
-        /// All complex item already processed. Used for ComplexReference resolution.
+        /// Properties already processed. Used for reference resolution.
         /// </summary>
-        private IDictionary<int, ComplexProperty> complexItems = new Dictionary<int, ComplexProperty>();
+        private readonly Dictionary<int, ReferenceTargetProperty> _propertyCache =
+            new Dictionary<int, ReferenceTargetProperty>();
 
         ///<summary>
         ///</summary>
@@ -108,6 +109,19 @@ namespace Polenter.Serialization.Advanced
                 propertyType = expectedType;
             }
 
+            int referenceId = 0;
+            if (elementId==Elements.Reference || Elements.IsElementWithId(elementId))
+            {
+                referenceId = _reader.ReadNumber();
+
+                if (elementId==Elements.Reference)
+                {
+                    // This is reference
+                    // Get property from the cache
+                    return createProperty(referenceId, propertyName, propertyType);                    
+                }
+            }
+
             // create the property
             Property property = createProperty(elementId, propertyName, propertyType);
             if (property == null) return null;
@@ -125,6 +139,19 @@ namespace Polenter.Serialization.Advanced
             {
                 parseSimpleProperty(simpleProperty);
                 return simpleProperty;
+            }
+
+            var referenceProperty = property as ReferenceTargetProperty;
+            if (referenceProperty!=null)
+            {
+                if (referenceId>0)
+                {
+                    // object is used multiple times
+                    referenceProperty.Reference = new ReferenceInfo();
+                    referenceProperty.Reference.Id = referenceId;
+                    referenceProperty.Reference.IsProcessed = true;
+                    _propertyCache.Add(referenceId, referenceProperty);
+                }
             }
 
             var multiDimensionalArrayProperty = property as MultiDimensionalArrayProperty;
@@ -158,48 +185,15 @@ namespace Polenter.Serialization.Advanced
             var complexProperty = property as ComplexProperty;
             if (complexProperty != null)
             {
-                parseComplexProperty(complexProperty, elementId == Elements.ComplexObjectWithId);
+                parseComplexProperty(complexProperty);
                 return complexProperty;
-            }
-
-            var complexReferenceProperty = property as ComplexReferenceProperty;
-            if (complexReferenceProperty != null)
-            {
-                parseComplexReferenceProperty(complexReferenceProperty);
-                return complexReferenceProperty;
             }
 
             return property;
         }
 
-        private void parseComplexReferenceProperty(ComplexReferenceProperty property)
+        private void parseComplexProperty(ComplexProperty property)
         {
-            int complexReferenceId = _reader.ReadNumber();
-
-            ComplexProperty target;
-            if (complexItems.TryGetValue(complexReferenceId, out target))
-                property.ReferenceTarget = target;
-            else
-            {
-                string message = string.Format("{0}-parser : Cannot find <{6} {4}='{5}'/>  when resolving <{1} {2} ='{3}' {4}='{5}'/>",
-                    GetType().Name,
-                    Polenter.Serialization.Core.Xml.Elements.ComplexObjectReference,
-                    Polenter.Serialization.Core.Xml.Attributes.Name, property.Name,
-                    Polenter.Serialization.Core.Xml.Attributes.ComplexReferenceId, complexReferenceId,
-                    Polenter.Serialization.Core.Xml.Elements.ComplexObject);
-                throw new FormatException(message);
-            }
-
-        }
-
-        private void parseComplexProperty(ComplexProperty property, bool withReferenceId)
-        {
-            if (withReferenceId)
-            {
-                property.ComplexReferenceId = _reader.ReadNumber();
-                complexItems.Add(property.ComplexReferenceId, property);
-            }
-
             // There are properties
             readProperties(property.Properties, property.Type);
         }
@@ -360,7 +354,7 @@ namespace Polenter.Serialization.Advanced
             property.Value = _reader.ReadValue(property.Type);
         }
 
-        private Property createProperty(byte elementId, string propertyName, Type propertyType)
+        private static Property createProperty(byte elementId, string propertyName, Type propertyType)
         {
             switch (elementId)
             {
@@ -369,21 +363,34 @@ namespace Polenter.Serialization.Advanced
                 case Elements.ComplexObject:
                 case Elements.ComplexObjectWithId:
                     return new ComplexProperty(propertyName, propertyType);
-                case Elements.ComplexObjectReference:
-                    return new ComplexReferenceProperty(propertyName);
                 case Elements.Collection:
+                case Elements.CollectionWithId:
                     return new CollectionProperty(propertyName, propertyType);
                 case Elements.Dictionary:
+                case Elements.DictionaryWithId:
                     return new DictionaryProperty(propertyName, propertyType);
                 case Elements.SingleArray:
+                case Elements.SingleArrayWithId:
                     return new SingleDimensionalArrayProperty(propertyName, propertyType);
                 case Elements.MultiArray:
+                case Elements.MultiArrayWithId:
                     return new MultiDimensionalArrayProperty(propertyName, propertyType);
                 case Elements.Null:
                     return new NullProperty(propertyName);
                 default:
                     return null;
             }
+        }
+
+        private Property createProperty(int referenceId, string propertyName, Type propertyType)
+        {
+            var cachedProperty = _propertyCache[referenceId];
+            var property = (ReferenceTargetProperty)Property.CreateInstance(cachedProperty.Art, propertyName, propertyType);
+            cachedProperty.Reference.Count++;
+            property.MakeFlatCopyFrom(cachedProperty);
+            // Reference must be recreated, cause IsProcessed differs for reference and the full property
+            property.Reference = new ReferenceInfo() { Id = referenceId };
+            return property;
         }
     }
 }

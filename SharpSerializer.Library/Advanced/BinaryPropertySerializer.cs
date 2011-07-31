@@ -81,6 +81,16 @@ namespace Polenter.Serialization.Advanced
             _writer.WriteType(valueType);
         }
 
+        private bool writePropertyHeaderWithReferenceId(byte elementId, ReferenceInfo info, string name, Type valueType)
+        {
+            if (info.Count < 2)
+                // no need to write id
+                return false;
+            writePropertyHeader(elementId, name, valueType);
+            _writer.WriteNumber(info.Id);
+            return true;
+        }
+
         /// <summary>
         /// </summary>
         /// <param name = "property"></param>
@@ -104,7 +114,11 @@ namespace Polenter.Serialization.Advanced
         protected override void SerializeMultiDimensionalArrayProperty(
             PropertyTypeInfo<MultiDimensionalArrayProperty> property)
         {
-            writePropertyHeader(Elements.MultiArray, property.Name, property.ValueType);
+            if (!writePropertyHeaderWithReferenceId(Elements.MultiArrayWithId, property.Property.Reference, property.Name, property.ValueType))
+            {
+                // Property value is not referenced multiple times
+                writePropertyHeader(Elements.MultiArray, property.Name, property.ValueType);
+            } 
 
             // ElementType
             _writer.WriteType(property.Property.ElementType);
@@ -164,7 +178,11 @@ namespace Polenter.Serialization.Advanced
         protected override void SerializeSingleDimensionalArrayProperty(
             PropertyTypeInfo<SingleDimensionalArrayProperty> property)
         {
-            writePropertyHeader(Elements.SingleArray, property.Name, property.ValueType);
+            if (!writePropertyHeaderWithReferenceId(Elements.SingleArrayWithId, property.Property.Reference, property.Name, property.ValueType))
+            {
+                // Property value is not referenced multiple times
+                writePropertyHeader(Elements.SingleArray, property.Name, property.ValueType);
+            } 
 
             // ElementType
             _writer.WriteType(property.Property.ElementType);
@@ -193,7 +211,11 @@ namespace Polenter.Serialization.Advanced
         /// <param name = "property"></param>
         protected override void SerializeDictionaryProperty(PropertyTypeInfo<DictionaryProperty> property)
         {
-            writePropertyHeader(Elements.Dictionary, property.Name, property.ValueType);
+            if (!writePropertyHeaderWithReferenceId(Elements.DictionaryWithId, property.Property.Reference, property.Name, property.ValueType))
+            {
+                // Property value is not referenced multiple times
+                writePropertyHeader(Elements.Dictionary, property.Name, property.ValueType);
+            } 
 
             // type of keys
             _writer.WriteType(property.Property.KeyType);
@@ -233,7 +255,11 @@ namespace Polenter.Serialization.Advanced
         /// <param name = "property"></param>
         protected override void SerializeCollectionProperty(PropertyTypeInfo<CollectionProperty> property)
         {
-            writePropertyHeader(Elements.Collection, property.Name, property.ValueType);
+            if (!writePropertyHeaderWithReferenceId(Elements.CollectionWithId, property.Property.Reference, property.Name, property.ValueType))
+            {
+                // Property value is not referenced multiple times
+                writePropertyHeader(Elements.Collection, property.Name, property.ValueType);
+            }  
 
             // ElementType
             _writer.WriteType(property.Property.ElementType);
@@ -246,30 +272,28 @@ namespace Polenter.Serialization.Advanced
         }
 
         /// <summary>
-        /// Serializes a ComplexReference property (2nd or later occurrence of a complex property).
-        /// </summary>
-        /// <param name="property">Item to be serialized</param>
-        protected override void SerializeComplexReferenceProperty(PropertyTypeInfo<ComplexReferenceProperty> property)
-        {
-            writePropertyHeader(Elements.ComplexObjectReference, property.Name, property.ValueType);
-            _writer.WriteNumber(property.Property.ReferenceTarget.ComplexReferenceId);
-        }
-
-        /// <summary>
         /// </summary>
         /// <param name = "property"></param>
         protected override void SerializeComplexProperty(PropertyTypeInfo<ComplexProperty> property)
         {
-            if (property.Property.IsReferencedMoreThanOnce)
+            if (!writePropertyHeaderWithReferenceId(Elements.ComplexObjectWithId, property.Property.Reference, property.Name, property.ValueType))
             {
-                writePropertyHeader(Elements.ComplexObjectWithId, property.Name, property.ValueType);
-                _writer.WriteNumber(property.Property.ComplexReferenceId);
-            }
-            else
-                writePropertyHeader(Elements.ComplexObject, property.Name, property.ValueType);
+                // Property value is not referenced multiple times
+                writePropertyHeader(Elements.ComplexObject, property.Name, property.ValueType);                
+            }            
 
             // Properties
             writeProperties(property.Property.Properties, property.Property.Type);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="referenceTarget"></param>
+        protected override void SerializeReference(ReferenceTargetProperty referenceTarget)
+        {
+            writePropertyHeader(Elements.Reference, referenceTarget.Name, null);
+            _writer.WriteNumber(referenceTarget.Reference.Id);
         }
 
         private void writeProperties(PropertyCollection properties, Type ownerType)
