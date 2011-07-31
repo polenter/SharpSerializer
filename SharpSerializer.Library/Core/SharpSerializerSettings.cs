@@ -43,6 +43,13 @@ namespace Polenter.Serialization.Core
     {
         private T _advancedSettings;
 
+        protected SharpSerializerSettings()
+        {
+            IncludeAssemblyVersionInTypeName = true;
+            IncludeCultureInTypeName = true;
+            IncludePublicKeyTokenInTypeName = true;
+        }
+
         /// <summary>
         ///   Contains mostly classes from the namespace Polenter.Serialization.Advanced
         /// </summary>
@@ -79,7 +86,7 @@ namespace Polenter.Serialization.Core
     {
         /// <summary>
         ///   Converts simple values to string and vice versa. Default it is an instance of SimpleValueConverter with CultureInfo.InvariantCulture.
-        ///   You can override the default converter to implement your own convertion to/from string.
+        ///   You can override the default converter to implement your own converting to/from string.
         /// </summary>
         public ISimpleValueConverter SimpleValueConverter { get; set; }
     }

@@ -145,13 +145,14 @@ namespace HelloWorldApp
 
 
             // AssemblyQualifiedName
-            // During serialization all types must be converted to strings. Default the type is stored in the short form, as <typeName, assemblyName>.
-            // It reduces size and is enough for the simple serialization. You can force the SharpSerializer to serialize types
-            // as fully qualified assembly name by setting the following properties to true
-            // Example of the default type name:
-            // "System.String, mscorlib"
-            // Example if all three properties are true:
+            // During serialization all types must be converted to strings. 
+            // Since v.2.12 the type is stored as an AssemblyQualifiedName per default.
+            // You can force the SharpSerializer to shorten the type descriptions
+            // by setting the following properties to false
+            // Example of AssemblyQualifiedName:
             // "System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+            // Example of the short type name:
+            // "System.String, mscorlib"
             settings.IncludeAssemblyVersionInTypeName = true;
             settings.IncludeCultureInTypeName = true;
             settings.IncludePublicKeyTokenInTypeName = true;
@@ -190,11 +191,8 @@ namespace HelloWorldApp
             
 
             // TypeNameConverter
-            // Default all types are serialized as <typeName, assemblyName>
-            // There is no consideration about Version, Culture and PublicKeyToken
-            // Example of the default type name: "System.String, mscorlib"
-            //
-            // If you need full AssemblyQualifiedName you can use the settings above (Include...) or create your own instance of ITypeNameConverter.
+            // Since the v.2.12 all types are serialized as AssemblyQualifiedName.
+            // To change this you can alter the settings above (Include...) or create your own instance of ITypeNameConverter.
             // Important! This property overrides the three properties below/above: 
             //    IncludeAssemblyVersionInTypeName, IncludeCultureInTypeName, IncludePublicKeyTokenInTypeName            
             settings.AdvancedSettings.TypeNameConverter = new MyTypeNameConverterWithCompressedTypeNames();
@@ -220,13 +218,14 @@ namespace HelloWorldApp
 
 
             // AssemblyQualifiedName
-            // During serialization all types must be converted to strings. Default the type is stored in the short form, as <typeName, assemblyName>.
-            // It reduces size and is enough for the simple serialization. You can force the SharpSerializer to serialize types
-            // as fully qualified assembly name by setting the following properties to true
-            // Example of the default type name:
-            // "System.String, mscorlib"
-            // Example if all three properties are true:
+            // During serialization all types must be converted to strings. 
+            // Since v.2.12 the type is stored as an AssemblyQualifiedName per default.
+            // You can force the SharpSerializer to shorten the type descriptions
+            // by setting the following properties to false
+            // Example of AssemblyQualifiedName:
             // "System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+            // Example of the short type name:
+            // "System.String, mscorlib"
             settings.IncludeAssemblyVersionInTypeName = true;
             settings.IncludeCultureInTypeName = true;
             settings.IncludePublicKeyTokenInTypeName = true;
@@ -279,11 +278,8 @@ namespace HelloWorldApp
 
 
             // TypeNameConverter
-            // Default all types are serialized as <typeName, assemblyName>
-            // There is no consideration about Version, Culture and PublicKeyToken
-            // Example of the default type name: "System.String, mscorlib"
-            //
-            // If you need full AssemblyQualifiedName you can use the settings above (Include...) or create your own instance of ITypeNameConverter.
+            // Since the v.2.12 all types are serialized as AssemblyQualifiedName.
+            // To change this you can alter the settings above (Include...) or create your own instance of ITypeNameConverter.
             // Important! This property overrides the three properties below/above: 
             //    IncludeAssemblyVersionInTypeName, IncludeCultureInTypeName, IncludePublicKeyTokenInTypeName            
             settings.AdvancedSettings.TypeNameConverter = new MyTypeNameConverterWithCompressedTypeNames();
