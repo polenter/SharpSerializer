@@ -63,25 +63,15 @@ namespace Polenter.Serialization.Core
             return settings;
         }
 
-        public static ITypeNameConverter GetTypeNameConverter()
-        {
-            return GetTypeNameConverter(false, false, false);
-        }
-
         public static ITypeNameConverter GetTypeNameConverter(bool includeAssemblyVersion, bool includeCulture,
                                                               bool includePublicKeyToken)
         {
             return new TypeNameConverter(includeAssemblyVersion, includeCulture, includePublicKeyToken);
         }
 
-        public static ISimpleValueConverter GetSimpleValueConverter()
+        public static ISimpleValueConverter GetSimpleValueConverter(CultureInfo cultureInfo, ITypeNameConverter typeNameConverter)
         {
-            return GetSimpleValueConverter(CultureInfo.InvariantCulture);
-        }
-
-        public static ISimpleValueConverter GetSimpleValueConverter(CultureInfo cultureInfo)
-        {
-            return new SimpleValueConverter(cultureInfo);
+            return new SimpleValueConverter(cultureInfo, typeNameConverter);
         }
     }
 }

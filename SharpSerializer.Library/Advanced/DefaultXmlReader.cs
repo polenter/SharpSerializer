@@ -176,11 +176,6 @@ namespace Polenter.Serialization.Advanced
         public object GetAttributeAsObject(string attributeName, Type expectedType)
         {
             string objectAsText = GetAttributeAsString(attributeName);
-            if (expectedType != null && (expectedType == typeof(Type) || expectedType.IsSubclassOf(typeof(Type))))
-            {
-                // Type was detected
-                return _typeNameConverter.ConvertToType(objectAsText);
-            }
             return _valueConverter.ConvertFromString(objectAsText, expectedType);
         }
 

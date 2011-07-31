@@ -28,6 +28,7 @@
 
 using System;
 using System.Globalization;
+using Polenter.Serialization.Advanced.Serializing;
 using Polenter.Serialization.Advanced.Xml;
 using Polenter.Serialization.Core;
 
@@ -45,6 +46,7 @@ namespace Polenter.Serialization.Advanced
     public sealed class SimpleValueConverter : ISimpleValueConverter
     {
         private readonly CultureInfo _cultureInfo;
+        private readonly ITypeNameConverter _typeNameConverter;
 
         /// <summary>
         ///   Default is CultureInfo.InvariantCulture used
@@ -52,7 +54,7 @@ namespace Polenter.Serialization.Advanced
         public SimpleValueConverter()
         {
             _cultureInfo = CultureInfo.InvariantCulture;
-
+            _typeNameConverter = new TypeNameConverter();
             // Alternatively
             //_cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
         }
@@ -61,9 +63,11 @@ namespace Polenter.Serialization.Advanced
         ///   Here you can customize the culture. I.e. System.Threading.Thread.CurrentThread.CurrentCulture
         /// </summary>
         /// <param name = "cultureInfo"></param>
-        public SimpleValueConverter(CultureInfo cultureInfo)
+        /// <param name="typeNameConverter"></param>
+        public SimpleValueConverter(CultureInfo cultureInfo, ITypeNameConverter typeNameConverter)
         {
             _cultureInfo = cultureInfo;
+            _typeNameConverter = typeNameConverter;
         }
 
         #region ISimpleValueConverter Members
@@ -75,6 +79,9 @@ namespace Polenter.Serialization.Advanced
         public string ConvertToString(object value)
         {
             if (value == null) return string.Empty;
+
+            if (isType(value))
+                return _typeNameConverter.ConvertToTypeName((Type)value);
 
             return Convert.ToString(value, _cultureInfo);
         }
@@ -110,6 +117,8 @@ namespace Polenter.Serialization.Advanced
                 if (type == typeof(Guid)) return new Guid(text);
                 // Enumeration
                 if (type.IsEnum) return Enum.Parse(type, text, true);
+                if (isType(type)) 
+                    return _typeNameConverter.ConvertToType(text);
 
                 throw new InvalidOperationException(string.Format("Unknown simple type: {0}", type.FullName));
             }
@@ -121,5 +130,10 @@ namespace Polenter.Serialization.Advanced
         }
 
         #endregion
+
+        private static bool isType(object value)
+        {
+            return (value as Type) != null;
+        }
     }
 }

@@ -141,16 +141,15 @@ namespace Polenter.Serialization
             PropertyProvider.AttributesToIgnore = settings.AdvancedSettings.AttributesToIgnore;
             //RootName
             RootName = settings.AdvancedSettings.RootName;
-            // SimpleValueConverter
-            ISimpleValueConverter simpleValueConverter = settings.AdvancedSettings.SimpleValueConverter ??
-                                                         DefaultInitializer.GetSimpleValueConverter(settings.Culture);
-
             // TypeNameConverter)
             ITypeNameConverter typeNameConverter = settings.AdvancedSettings.TypeNameConverter ??
                                                    DefaultInitializer.GetTypeNameConverter(
                                                        settings.IncludeAssemblyVersionInTypeName,
                                                        settings.IncludeCultureInTypeName,
                                                        settings.IncludePublicKeyTokenInTypeName);
+            // SimpleValueConverter
+            ISimpleValueConverter simpleValueConverter = settings.AdvancedSettings.SimpleValueConverter ??
+                                                         DefaultInitializer.GetSimpleValueConverter(settings.Culture, typeNameConverter);
             // XmlWriterSettings
             XmlWriterSettings xmlWriterSettings = DefaultInitializer.GetXmlWriterSettings(settings.Encoding);
             // XmlReaderSettings

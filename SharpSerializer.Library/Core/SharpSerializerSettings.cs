@@ -43,6 +43,9 @@ namespace Polenter.Serialization.Core
     {
         private T _advancedSettings;
 
+        /// <summary>
+        /// IncludeAssemblyVersionInTypeName, IncludeCultureInTypeName and IncludePublicKeyTokenInTypeName are true
+        /// </summary>
         protected SharpSerializerSettings()
         {
             IncludeAssemblyVersionInTypeName = true;
