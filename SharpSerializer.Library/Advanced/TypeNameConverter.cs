@@ -34,15 +34,15 @@ using Polenter.Serialization.Advanced.Serializing;
 namespace Polenter.Serialization.Advanced
 {
     /// <summary>
-    ///   Converts Type to its text representation and vice versa. Default is the "Typename, Assemblyname" as a result.
-    ///   Use overloaded constructor to define fully qualified assembly name.
+    ///   Converts Type to its text representation and vice versa. Since v.2.12 all types serialize to the AssemblyQualifiedName.
+    ///   Use overloaded constructor to shorten type names.
     /// </summary>
     public sealed class TypeNameConverter : ITypeNameConverter
     {
         private readonly Dictionary<Type, string> _cache = new Dictionary<Type, string>();
 
         /// <summary>
-        ///   As type name there is the whole Type.AssemblyQualifiedName
+        /// Since v.2.12 as default the type name is equal to Type.AssemblyQualifiedName
         /// </summary>
         public TypeNameConverter()
         {
