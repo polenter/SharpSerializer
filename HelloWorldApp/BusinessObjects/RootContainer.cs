@@ -102,6 +102,11 @@ namespace HelloWorldApp.BusinessObjects
         public string[,] DoubleArray { get; set; }
 
         /// <summary>
+        /// Control signs (Tab, NewLine, \0) are also serialized
+        /// </summary>
+        public char[] SingleArrayOfChars { get; set; }
+
+        /// <summary>
         /// Single array of derived objects. 
         /// This is polymorphic collection - Items derive from the interface
         /// </summary>
@@ -213,6 +218,7 @@ namespace HelloWorldApp.BusinessObjects
 
             root.SingleArray = new[] {"ala", "ma", null, "kota"};
             root.DoubleArray = new[,] {{"k1", "k2"}, {"b1", "b2"}, {"z1", "z2"}};
+            root.SingleArrayOfChars = new char[] { 'o', '\t', '\n',(char)0 };
 
             root.PolymorphicSingleArray = new IComplexObject[] {new ComplexObject() {SimpleInt = 999}};
 
