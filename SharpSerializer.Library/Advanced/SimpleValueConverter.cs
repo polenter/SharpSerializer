@@ -47,6 +47,8 @@ namespace Polenter.Serialization.Advanced
     {
         private readonly CultureInfo _cultureInfo;
         private readonly ITypeNameConverter _typeNameConverter;
+        private const char NullChar = (char) 0;
+        private const string NullCharAsString = "&#x0;";
 
         /// <summary>
         ///   Default is CultureInfo.InvariantCulture used
@@ -80,8 +82,13 @@ namespace Polenter.Serialization.Advanced
         {
             if (value == null) return string.Empty;
 
+            // Type
             if (isType(value))
                 return _typeNameConverter.ConvertToTypeName((Type)value);
+
+            // Char which is \0
+            if (value.Equals(NullChar))
+                return NullCharAsString;
 
             return Convert.ToString(value, _cultureInfo);
         }
@@ -99,7 +106,15 @@ namespace Polenter.Serialization.Advanced
                 if (type == typeof (string)) return text;
                 if (type == typeof (Boolean)) return Convert.ToBoolean(text, _cultureInfo);
                 if (type == typeof (Byte)) return Convert.ToByte(text, _cultureInfo);
-                if (type == typeof (Char)) return Convert.ToChar(text, _cultureInfo);
+                if (type == typeof (Char))
+                {
+                    if (text == NullCharAsString)
+                        // this is a null termination
+                        return NullChar;
+                    //other chars
+                    return Convert.ToChar(text, _cultureInfo);
+                }
+                    
                 if (type == typeof (DateTime)) return Convert.ToDateTime(text, _cultureInfo);
                 if (type == typeof (Decimal)) return Convert.ToDecimal(text, _cultureInfo);
                 if (type == typeof (Double)) return Convert.ToDouble(text, _cultureInfo);
