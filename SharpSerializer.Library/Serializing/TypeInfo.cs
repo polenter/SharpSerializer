@@ -27,7 +27,6 @@
 #endregion
 
 using System;
-using System.Collections.ObjectModel;
 using Polenter.Serialization.Core;
 
 namespace Polenter.Serialization.Serializing
@@ -40,6 +39,9 @@ namespace Polenter.Serialization.Serializing
         /// <summary>
         ///   Cache stores type info and spares time be recall the info every time it is needed
         /// </summary>
+#if !Smartphone
+        [ThreadStatic]
+#endif
         private static readonly TypeInfoCollection Cache = new TypeInfoCollection();
 
         ///<summary>
@@ -157,8 +159,11 @@ namespace Polenter.Serialization.Serializing
                         }
                     }
                 }
-
+#if Smartphone
+                Cache.AddIfNotExists(typeInfo);
+#else
                 Cache.Add(typeInfo);
+#endif
             }
 
             return typeInfo;
@@ -190,35 +195,6 @@ namespace Polenter.Serialization.Serializing
                 return arguments.Length > 0;
             }
             return false;
-        }
-    }
-
-    ///<summary>
-    ///</summary>
-    public sealed class TypeInfoCollection : KeyedCollection<Type, TypeInfo>
-    {
-        /// <summary>
-        /// </summary>
-        /// <returns>null if the key was not found</returns>
-        public TypeInfo TryGetTypeInfo(Type type)
-        {
-            foreach (TypeInfo item in Items)
-            {
-                if (item.Type == type)
-                {
-                    return item;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name = "item"></param>
-        /// <returns></returns>
-        protected override Type GetKeyForItem(TypeInfo item)
-        {
-            return item.Type;
         }
     }
 }
