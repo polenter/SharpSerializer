@@ -37,6 +37,7 @@ using Polenter.Serialization.Advanced.Xml;
 using Polenter.Serialization.Core;
 using Polenter.Serialization.Deserializing;
 using Polenter.Serialization.Serializing;
+using System.Runtime.CompilerServices;
 
 namespace Polenter.Serialization
 {
@@ -207,6 +208,7 @@ namespace Polenter.Serialization
         /// </summary>
         /// <param name = "data"></param>
         /// <param name = "filename"></param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Serialize(object data, string filename)
         {
             using (Stream stream = new FileStream(filename, FileMode.Create, FileAccess.Write))
@@ -220,6 +222,7 @@ namespace Polenter.Serialization
         /// </summary>
         /// <param name = "data"></param>
         /// <param name = "stream"></param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Serialize(object data, Stream stream)
         {
             if (data == null) throw new ArgumentNullException("data");
@@ -244,6 +247,7 @@ namespace Polenter.Serialization
         /// </summary>
         /// <param name = "filename"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public object Deserialize(string filename)
         {
             using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read))
@@ -257,6 +261,7 @@ namespace Polenter.Serialization
         /// </summary>
         /// <param name = "stream"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public object Deserialize(Stream stream)
         {
             try
