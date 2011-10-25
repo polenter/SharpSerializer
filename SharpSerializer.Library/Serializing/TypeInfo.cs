@@ -42,7 +42,7 @@ namespace Polenter.Serialization.Serializing
 #if !Smartphone
         [ThreadStatic]
 #endif
-        private static readonly TypeInfoCollection Cache = new TypeInfoCollection();
+        private static TypeInfoCollection _cache;
 
         ///<summary>
         ///</summary>
@@ -83,6 +83,18 @@ namespace Polenter.Serialization.Serializing
         ///  Property type
         ///</summary>
         public Type Type { get; set; }
+
+        private static TypeInfoCollection Cache
+        {
+            get
+            {
+                if (_cache==null)
+                {
+                    _cache=new TypeInfoCollection();
+                }
+                return _cache;
+            }
+        }
 
 
         ///<summary>
