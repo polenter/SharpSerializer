@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Polenter - Software Solutions")]
 [assembly: AssemblyProduct("SharpSerializer.Library")]
-[assembly: AssemblyCopyright("Copyright ©  2010, Pawel Idzikowski")]
+[assembly: AssemblyCopyright("Copyright ©  2010-2011, Pawel Idzikowski")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -63,4 +63,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.14.0.0")]
+[assembly: AssemblyVersion("2.15.0.0")]
