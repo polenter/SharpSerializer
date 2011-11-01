@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Advanced\BinaryPropertyDeserializer.cs" />
     <Compile Include="Advanced\BinaryPropertySerializer.cs" />
+    <Compile Include="Advanced\PropertyCache.cs" />
     <Compile Include="Core\ArrayAnalyzer.cs" />
     <Compile Include="BinarySerializationMode.cs" />
     <Compile Include="Core\Binary\Elements.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Advanced\Xml\IXmlWriter.cs" />
     <Compile Include="Core\DeserializingException.cs" />
     <Compile Include="Serializing\PropertyTypeInfo.cs" />
+    <Compile Include="Serializing\TypeInfoCollection.cs" />
     <Compile Include="SharpSerializerBinarySettings.cs" />
     <Compile Include="SharpSerializerXmlSettings.cs" />
     <Compile Include="Advanced\Serializing\ITypeNameConverter.cs" />

@@ -77,6 +77,9 @@
     <Compile Include="..\SharpSerializer.Library\Advanced\Deserializing\IPropertyDeserializer.cs">
       <Link>Advanced\Deserializing\IPropertyDeserializer.cs</Link>
     </Compile>
+    <Compile Include="..\SharpSerializer.Library\Advanced\PropertyCache.cs">
+      <Link>Advanced\PropertyCache.cs</Link>
+    </Compile>
     <Compile Include="..\SharpSerializer.Library\Advanced\PropertyProvider.cs">
       <Link>Advanced\PropertyProvider.cs</Link>
     </Compile>
@@ -172,6 +175,9 @@
     </Compile>
     <Compile Include="..\SharpSerializer.Library\Serializing\TypeInfo.cs">
       <Link>Serializing\TypeInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpSerializer.Library\Serializing\TypeInfoCollection.cs">
+      <Link>Serializing\TypeInfoCollection.cs</Link>
     </Compile>
     <Compile Include="..\SharpSerializer.Library\SharpSerializer.cs">
       <Link>SharpSerializer.cs</Link>
