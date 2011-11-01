@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("HalloWorldApp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Test program for the SharpSerializer Framework")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Polenter - Software Solutions")]
 [assembly: AssemblyProduct("HalloWorldApp")]
-[assembly: AssemblyCopyright("Copyright ©  2010")]
+[assembly: AssemblyCopyright("Copyright ©  2010-2011, Pawel Idzikowski")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,4 +35,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.13.0.0")]
+[assembly: AssemblyVersion("2.16.0.0")]

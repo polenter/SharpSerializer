@@ -188,7 +188,9 @@
     <Compile Include="..\SharpSerializer.Library\SharpSerializerXmlSettings.cs">
       <Link>SharpSerializerXmlSettings.cs</Link>
     </Compile>
+    <Compile Include="Advanced\PropertyCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serializing\TypeInfoCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SharpSerializer.ico" />

@@ -48,7 +48,10 @@ namespace Polenter.Serialization.Advanced
     {
         private PropertiesToIgnore _propertiesToIgnore;
         private IList<Type> _attributesToIgnore;
-        private static readonly Dictionary<Type, IList<PropertyInfo>> _cache = new Dictionary<Type, IList<PropertyInfo>>();
+#if !Smartphone
+        [ThreadStatic]
+#endif
+        private static PropertyCache _cache;
 
         /// <summary>
         ///   Which properties should be ignored
@@ -98,7 +101,11 @@ namespace Polenter.Serialization.Advanced
         public IList<PropertyInfo> GetProperties(TypeInfo typeInfo)
         {
             // Search in cache
-            if (_cache.ContainsKey(typeInfo.Type)) return _cache[typeInfo.Type];
+            var propertyInfos = Cache.TryGetPropertyInfos(typeInfo.Type);
+            if (propertyInfos != null)
+            {
+                return propertyInfos;
+            }
 
             // Creating infos
             PropertyInfo[] properties = GetAllProperties(typeInfo.Type);
@@ -113,7 +120,7 @@ namespace Polenter.Serialization.Advanced
             }
 
             // adding result to Cache
-            _cache.Add(typeInfo.Type, result);
+            Cache.Add(typeInfo.Type, result);
 
             return result;
         }
@@ -186,6 +193,18 @@ namespace Polenter.Serialization.Advanced
         protected virtual PropertyInfo[] GetAllProperties(Type type)
         {
             return type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        }
+
+        private static PropertyCache Cache
+        {
+            get
+            {
+                if (_cache==null)
+                {
+                    _cache=new PropertyCache();
+                }
+                return _cache;
+            }
         }
     }
 

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Polenter - Software Solutions")]
 [assembly: AssemblyProduct("Polenter.SharpSerializer.Compact")]
-[assembly: AssemblyCopyright("Copyright ©  2010, Pawel Idzikowski")]
+[assembly: AssemblyCopyright("Copyright ©  2010-2011, Pawel Idzikowski")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("2.13.0.0")]
+[assembly: AssemblyVersion("2.16.0.0")]
 
