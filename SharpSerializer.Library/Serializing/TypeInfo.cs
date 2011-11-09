@@ -125,7 +125,14 @@ namespace Polenter.Serialization.Serializing
                 typeInfo = new TypeInfo();
                 typeInfo.Type = type;
 
-                typeInfo.IsSimple = Tools.IsSimple(type);
+                typeInfo.IsSimple = Tools.IsSimple(type);   
+
+                // new since v.2.16
+                // check if array of byte
+                if (type==typeof(byte[]))
+                {
+                    typeInfo.ElementType = typeof (byte);
+                }
 
                 // Only not simple types can be Collections
                 if (!typeInfo.IsSimple)
