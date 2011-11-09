@@ -12,7 +12,6 @@ namespace HelloWorldApp.BusinessObjects
         /// </summary>
         public int SimpleInt { get; set; }
 
-
         /// <summary>
         /// 4 Byte Float
         /// </summary>
@@ -94,6 +93,12 @@ namespace HelloWorldApp.BusinessObjects
         /// It is serialized as SingleDimensionalArrayProperty
         /// </summary>
         public string[] SingleArray { get; set; }
+
+        /// <summary>
+        /// All arrays are serialized as collections but
+        /// array of byte is serialized as a simple type
+        /// </summary>
+        public byte[] ArrayOfByte { get; set; }
 
         /// <summary>
         /// Multidimensional array of simple type.
@@ -217,6 +222,7 @@ namespace HelloWorldApp.BusinessObjects
             root.Type = typeof(List<string>);
 
             root.SingleArray = new[] {"ala", "ma", null, "kota"};
+            root.ArrayOfByte = new byte[] { 66, 67, 68, 69, 70, 13, 10, 71, 72, 73, 13, 10, 159, 221 };
             root.DoubleArray = new[,] {{"k1", "k2"}, {"b1", "b2"}, {"z1", "z2"}};
             root.SingleArrayOfChars = new char[] { 'o', '\t', '\n',(char)0 };
 

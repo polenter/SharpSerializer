@@ -82,6 +82,12 @@ namespace Polenter.Serialization.Advanced
         {
             if (value == null) return string.Empty;
 
+            // Array of byte
+            if (value.GetType() == typeof(byte[]))
+            {
+                return Convert.ToBase64String((byte[])value);
+            }
+
             // Type
             if (isType(value))
                 return _typeNameConverter.ConvertToTypeName((Type)value);
@@ -132,8 +138,16 @@ namespace Polenter.Serialization.Advanced
                 if (type == typeof(Guid)) return new Guid(text);
                 // Enumeration
                 if (type.IsEnum) return Enum.Parse(type, text, true);
-                if (isType(type)) 
+                // Array of byte
+                if (type == typeof(byte[]))
+                {
+                    return Convert.FromBase64String(text);
+                }
+                // Type-check must be last
+                if (isType(type))
+                {
                     return _typeNameConverter.ConvertToType(text);
+                } 
 
                 throw new InvalidOperationException(string.Format("Unknown simple type: {0}", type.FullName));
             }

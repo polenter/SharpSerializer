@@ -75,6 +75,11 @@ namespace Polenter.Serialization.Core
             {
                 return true;
             }
+            if (type==typeof(byte[]))
+            {
+                // since v.2.16 is byte[] a simple type
+                return true;
+            }
 
             return type.IsPrimitive;
         }
