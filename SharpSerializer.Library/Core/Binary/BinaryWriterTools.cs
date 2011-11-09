@@ -159,8 +159,12 @@ namespace Polenter.Serialization.Core.Binary
                 writer.Write(((Guid)value).ToByteArray());
                 return;
             }
-#if Smartphone
-#elif SILVERLIGHT
+#if DEBUG || Smartphone || SILVERLIGHT
+            if (type == typeof(decimal))
+            {
+                writeDecimal((decimal)value, writer);
+                return;
+            }
 #else
             if (type == typeof (Decimal))
             {
@@ -235,6 +239,15 @@ namespace Polenter.Serialization.Core.Binary
             }
 
             throw new InvalidOperationException(string.Format("Unknown simple type: {0}", type.FullName));
+        }
+
+        private static void writeDecimal(decimal value, BinaryWriter writer)
+        {
+            var bits = decimal.GetBits(value);
+            writer.Write(bits[0]);
+            writer.Write(bits[1]);
+            writer.Write(bits[2]);
+            writer.Write(bits[3]);
         }
 
         private static bool isType(Type type)
