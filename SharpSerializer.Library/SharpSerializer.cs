@@ -211,9 +211,19 @@ namespace Polenter.Serialization
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Serialize(object data, string filename)
         {
+            createDirectoryIfNeccessary(filename);
             using (Stream stream = new FileStream(filename, FileMode.Create, FileAccess.Write))
             {
                 Serialize(data, stream);
+            }
+        }
+
+        private void createDirectoryIfNeccessary(string filename)
+        {
+            var directory = Path.GetDirectoryName(filename);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
             }
         }
 
