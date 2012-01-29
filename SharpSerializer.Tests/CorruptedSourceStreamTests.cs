@@ -39,6 +39,7 @@ namespace Polenter.Serialization
         /// No exception!
         /// </summary>
         [TestMethod]
+        [ExpectedException(typeof(DeserializingException))]
         public void CorruptedBurstBinaryStreamTest()
         {
             var myArray = new[] { "ala", "ma", null, "kota" };
@@ -84,7 +85,7 @@ namespace Polenter.Serialization
                 // serialize
                 serializer.Serialize(source, stream);
 
-                data = stream.GetBuffer();
+                data = stream.ToArray();
             }
 
 
@@ -106,18 +107,21 @@ namespace Polenter.Serialization
 
         byte[] replaceSomeBytesInData(byte[] data)
         {
-            var startIndex = data.Length / 3;
-            var endindex = startIndex + 20;
+            int startIndex = Convert.ToInt32(data.Length*0.7);
+            int endindex = Convert.ToInt32(data.Length * 0.9);
             for (int i = startIndex; i <= endindex; i++)
             {
-                data[i] = 125;
+                unchecked
+                {
+                    data[i] = Convert.ToByte(new Random().Next(255));     
+                }
             }
             return data;
         }
 
         byte[] shortenData(byte[] data)
         {
-            var result = new byte[data.Length - 231];
+            var result = new byte[Convert.ToInt32(data.Length * 0.9)];
             using(var stream = new MemoryStream(data))
             {
                 stream.Read(result, 0, result.Length);
