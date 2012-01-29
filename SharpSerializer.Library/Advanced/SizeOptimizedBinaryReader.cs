@@ -136,9 +136,11 @@ namespace Polenter.Serialization.Advanced
             _reader = new BinaryReader(stream, _encoding);
 
             // read names
+            _names.Clear();
             readHeader(_reader, _names, text => text);
 
             // read types
+            _types.Clear();
             readHeader(_reader, _types, _typeNameConverter.ConvertToType);
         }
 
