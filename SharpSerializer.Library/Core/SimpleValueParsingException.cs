@@ -27,7 +27,7 @@
 #endregion
 
 using System;
-#if Smartphone
+#if PORTABLE
 #elif SILVERLIGHT
 #else
     using System.Runtime.Serialization;
@@ -38,7 +38,7 @@ namespace Polenter.Serialization.Core
     /// <summary>
     ///   Occures if the simple value can not be restored from its text representation
     /// </summary>
-#if Smartphone
+#if PORTABLE
 #elif SILVERLIGHT
 #else
     [Serializable]
@@ -66,7 +66,7 @@ namespace Polenter.Serialization.Core
         {
         }
 
-#if Smartphone
+#if PORTABLE
 #elif SILVERLIGHT
 #else
         /// <summary>

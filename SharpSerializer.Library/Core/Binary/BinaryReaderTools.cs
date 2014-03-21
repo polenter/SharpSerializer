@@ -111,7 +111,7 @@ namespace Polenter.Serialization.Core.Binary
                 if (type == typeof (Char)) return reader.ReadChar();
                 if (type == typeof (DateTime)) return new DateTime(reader.ReadInt64());
                 if (type == typeof(Guid)) return new Guid(reader.ReadBytes(16));
-#if DEBUG || Smartphone || SILVERLIGHT
+#if DEBUG || PORTABLE || SILVERLIGHT
                 if (type == typeof(decimal)) return readDecimal(reader);                
 #else
                 if (type == typeof (Decimal)) return reader.ReadDecimal();

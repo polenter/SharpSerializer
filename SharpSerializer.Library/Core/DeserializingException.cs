@@ -28,7 +28,7 @@
 
 using System;
 
-#if Smartphone
+#if PORTABLE
 #else
 using System.Runtime.Serialization;
 #endif
@@ -38,7 +38,7 @@ namespace Polenter.Serialization.Core
     /// <summary>
     ///   Can occure during deserialization
     /// </summary>
-#if SMARTPHONE
+#if PORTABLE
 #elif SILVERLIGHT    
 #else
     [Serializable]
@@ -73,7 +73,7 @@ namespace Polenter.Serialization.Core
         {
         }
 
-#if Smartphone
+#if PORTABLE
 #elif SILVERLIGHT
 #else
         /// <summary>
