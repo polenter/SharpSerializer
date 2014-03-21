@@ -29,7 +29,7 @@
 using System;
 
 
-#if Smartphone
+#if PORTABLE
 #else
 using System.Runtime.Serialization;
 #endif
@@ -39,7 +39,7 @@ namespace Polenter.Serialization.Core
     /// <summary>
     ///   Occurs if no instance of a type can be created. Maybe the type lacks on a public standard (parameterless) constructor?
     /// </summary>
-#if SMARTPHONE
+#if PORTABLE
 #elif SILVERLIGHT
 #else
     [Serializable]
@@ -68,7 +68,7 @@ namespace Polenter.Serialization.Core
         }
 
 
-#if Smartphone
+#if PORTABLE
 #elif SILVERLIGHT
 #else
         /// <summary>

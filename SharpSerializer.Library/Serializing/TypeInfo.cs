@@ -39,7 +39,7 @@ namespace Polenter.Serialization.Serializing
         /// <summary>
         ///   Cache stores type info and spares time be recall the info every time it is needed
         /// </summary>
-#if !Smartphone
+#if !PORTABLE
         [ThreadStatic]
 #endif
         private static TypeInfoCollection _cache;
@@ -178,7 +178,7 @@ namespace Polenter.Serialization.Serializing
                         }
                     }
                 }
-#if Smartphone
+#if PORTABLE
                 Cache.AddIfNotExists(typeInfo);
 #else
                 Cache.Add(typeInfo);

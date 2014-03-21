@@ -116,7 +116,11 @@ namespace Polenter.Serialization.Advanced
             {
                 // Close the current reader,
                 // it positions the parent reader on the last node of the subReader
+#if PORTABLE
+                subReader.Dispose();
+#else
                 subReader.Close();
+#endif
                 // aktualise the current Reader
                 popCurrentReader();
             }
@@ -198,7 +202,11 @@ namespace Polenter.Serialization.Advanced
         /// </summary>
         public void Close()
         {
+#if PORTABLE
+            _currentReader.Dispose();
+#else
             _currentReader.Close();
+#endif
         }
 
         #endregion

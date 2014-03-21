@@ -203,6 +203,7 @@ namespace Polenter.Serialization
 
         #region Serializing/Deserializing methods
 
+#if !PORTABLE
         /// <summary>
         ///   Serializing to a file. File will be always new created and closed after the serialization.
         /// </summary>
@@ -226,13 +227,16 @@ namespace Polenter.Serialization
                 Directory.CreateDirectory(directory);
             }
         }
+#endif
 
         /// <summary>
         ///   Serializing to the stream. After serialization the stream will NOT be closed.
         /// </summary>
         /// <param name = "data"></param>
         /// <param name = "stream"></param>
+#if !PORTABLE
         [MethodImpl(MethodImplOptions.Synchronized)]
+#endif
         public void Serialize(object data, Stream stream)
         {
             if (data == null) throw new ArgumentNullException("data");
@@ -251,7 +255,7 @@ namespace Polenter.Serialization
                 _serializer.Close();
             }
         }
-
+#if !PORTABLE
         /// <summary>
         ///   Deserializing from the file. After deserialization the file will be closed.
         /// </summary>
@@ -265,13 +269,15 @@ namespace Polenter.Serialization
                 return Deserialize(stream);
             }
         }
-
+#endif
         /// <summary>
         ///   Deserialization from the stream. After deserialization the stream will NOT be closed.
         /// </summary>
         /// <param name = "stream"></param>
         /// <returns></returns>
+#if !PORTABLE
         [MethodImpl(MethodImplOptions.Synchronized)]
+#endif
         public object Deserialize(Stream stream)
         {
             try

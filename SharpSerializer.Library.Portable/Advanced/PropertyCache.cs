@@ -6,7 +6,7 @@ namespace Polenter.Serialization.Advanced
 {
     ///<summary>
     /// Supports multithreading. It's slower but neccessary, 
-    /// because Compact Framework does not support ThreadStaticAttribute.
+    /// because Portable Framework does not support ThreadStaticAttribute.
     ///</summary>
     internal class PropertyCache
     {

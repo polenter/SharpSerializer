@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer.Library.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer.Tests", "SharpSerializer.Tests\SharpSerializer.Tests.csproj", "{6D44C26F-76A3-48F0-A29A-406603B72695}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer.Library.Portable", "SharpSerializer.Library.Portable\SharpSerializer.Library.Portable.csproj", "{B0FB4215-357F-4FAF-8EE9-93FD684B4B3F}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SharpSerializer.vsmdi
@@ -45,6 +47,10 @@ Global
 		{6D44C26F-76A3-48F0-A29A-406603B72695}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D44C26F-76A3-48F0-A29A-406603B72695}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D44C26F-76A3-48F0-A29A-406603B72695}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0FB4215-357F-4FAF-8EE9-93FD684B4B3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0FB4215-357F-4FAF-8EE9-93FD684B4B3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0FB4215-357F-4FAF-8EE9-93FD684B4B3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0FB4215-357F-4FAF-8EE9-93FD684B4B3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

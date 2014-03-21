@@ -7,7 +7,7 @@ namespace Polenter.Serialization.Serializing
     /// On the contrary to the full framework and Silverlight version,
     /// this Collection supports multithreading. It makes the item managing
     /// slower, but this is the price of lacking ThreadStaticAttribute in
-    /// Compact Framework.
+    /// Portable Framework.
     ///</summary>
     public sealed class TypeInfoCollection : KeyedCollection<Type, TypeInfo>
     {

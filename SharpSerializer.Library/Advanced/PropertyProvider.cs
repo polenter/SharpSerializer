@@ -48,7 +48,7 @@ namespace Polenter.Serialization.Advanced
     {
         private PropertiesToIgnore _propertiesToIgnore;
         private IList<Type> _attributesToIgnore;
-#if !Smartphone
+#if !PORTABLE
         [ThreadStatic]
 #endif
         private static PropertyCache _cache;
@@ -172,7 +172,7 @@ namespace Polenter.Serialization.Advanced
         /// <returns>
         /// 	<c>true</c> if no serialization
         /// </returns>
-        protected bool ContainsExcludeFromSerializationAttribute(ICustomAttributeProvider property)
+        protected bool ContainsExcludeFromSerializationAttribute(PropertyInfo property)
         {
             foreach (Type attrType in AttributesToIgnore)
             {

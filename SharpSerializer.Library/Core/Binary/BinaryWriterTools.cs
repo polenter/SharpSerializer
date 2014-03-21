@@ -159,7 +159,7 @@ namespace Polenter.Serialization.Core.Binary
                 writer.Write(((Guid)value).ToByteArray());
                 return;
             }
-#if DEBUG || Smartphone || SILVERLIGHT
+#if DEBUG || PORTABLE || SILVERLIGHT
             if (type == typeof(decimal))
             {
                 writeDecimal((decimal)value, writer);

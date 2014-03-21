@@ -313,7 +313,7 @@ namespace Polenter.Serialization.Deserializing
 
         private static Array createArrayInstance(Type elementType, int[] lengths, int[] lowerBounds)
         {
-#if Smartphone
+#if PORTABLE
             return Array.CreateInstance(elementType, lengths);
 #elif SILVERLIGHT
             return Array.CreateInstance(elementType, lengths);
