@@ -193,7 +193,7 @@ namespace Polenter.Serialization.Serializing
         {
             property.ElementType = info.ElementType;
 
-            var collection = (ICollection) value;
+            var collection = (IEnumerable) value;
             foreach (object item in collection)
             {
                 Property itemProperty = CreateProperty(null, item);

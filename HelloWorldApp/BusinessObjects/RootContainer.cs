@@ -190,6 +190,12 @@ namespace HelloWorldApp.BusinessObjects
         public GenericObject<IComplexObject>[,] MultiArrayOfGenericObjectWithPolymorphicArgument { get; set; }
 
         /// <summary>
+        /// Since the v.2.20.0.0 HashSet is converted to IEnumerable during serialization.
+        /// Earlier versions cannot serialized HashSet.
+        /// </summary>
+        public HashSet<Type> HashSetOfTypes { get; set; }
+
+        /// <summary>
         /// Array of objects where every item can be of other type
         /// It is serialized as SingleDimensionalArrayProperty
         /// </summary>
@@ -269,6 +275,8 @@ namespace HelloWorldApp.BusinessObjects
 
             root.MultiArrayOfGenericObjectWithPolymorphicArgument = new GenericObject<IComplexObject>[1,1];
             root.MultiArrayOfGenericObjectWithPolymorphicArgument[0,0] = new GenericObject<IComplexObject>() {Data = new ComplexObject(){SimpleInt = 1357}};
+
+            root.HashSetOfTypes = new HashSet<Type>(new Type[] {typeof(string), typeof(Type)});
 
             // it contains objects of different types, a nested array and a reference to another array
             root.SingleArrayOfObjects = new object[] { 42, "nothing to say", false, BusinessObjects.SimpleEnum.Three, null, new object[] { 42, "nothing to say", false, BusinessObjects.SimpleEnum.Three, null }, root.MultiArrayOfGenericObjectWithPolymorphicArgument };
