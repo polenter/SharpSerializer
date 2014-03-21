@@ -209,8 +209,8 @@ namespace Polenter.Serialization.Advanced
 
                 // estimating the propertyInfo
                 PropertyInfo subPropertyInfo = ownerType.GetProperty(propertyName);
-
-                Property subProperty = deserialize(elementId, propertyName, subPropertyInfo.PropertyType);
+                var propertyType = subPropertyInfo != null ? subPropertyInfo.PropertyType : null;
+                Property subProperty = deserialize(elementId, propertyName, propertyType);
                 properties.Add(subProperty);
             }
         }
