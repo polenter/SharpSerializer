@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Polenter.SharpSerializer.Portable")]
-[assembly: AssemblyDescription("Simple Framework to serialize/deserialize of objects in .NET Compact Framework")]
+[assembly: AssemblyDescription("Simple Framework to serialize/deserialize of objects in .NET Portable Framework (.NET 4 and above, Silverlight 4 and above, Windows Phone 7 and above, Windows RT - Metro, Xbox 360)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Polenter - Software Solutions")]
 [assembly: AssemblyProduct("Polenter.SharpSerializer.Portable")]
@@ -25,5 +25,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("2.18.0.0")]
+[assembly: AssemblyVersion("2.19.0.0")]
 
