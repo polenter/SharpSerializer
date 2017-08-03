@@ -98,7 +98,7 @@ namespace Polenter.Serialization.Advanced
         /// </summary>
         /// <param name = "typeInfo"></param>
         /// <returns></returns>
-        public IList<PropertyInfo> GetProperties(TypeInfo typeInfo)
+        public IList<PropertyInfo> GetProperties(Serialization.Serializing.TypeInfo typeInfo)
         {
             // Search in cache
             var propertyInfos = Cache.TryGetPropertyInfos(typeInfo.Type);
@@ -137,7 +137,7 @@ namespace Polenter.Serialization.Advanced
         ///   - does not have it's set or get accessor
         ///   - is indexer
         /// </returns>
-        protected virtual bool IgnoreProperty(TypeInfo info, PropertyInfo property)
+        protected virtual bool IgnoreProperty(Serialization.Serializing.TypeInfo info, PropertyInfo property)
         {
             // Soll die Eigenschaft ignoriert werden
             if (PropertiesToIgnore.Contains(info.Type, property.Name))
