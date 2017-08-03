@@ -8,3 +8,5 @@ glob:TestResults/
 glob:*.vsmdi
 glob:LocalTestRun.testrunconfig
 glob:*.user
+syntax: glob
+Backup/
