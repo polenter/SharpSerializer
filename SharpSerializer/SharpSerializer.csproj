@@ -1,9 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netstandard1.0</TargetFramework>
     <RootNamespace>Polenter.Serialization</RootNamespace>
     <AssemblyName>Polenter.SharpSerializer</AssemblyName>
+    <PackageId>SharpSerializer</PackageId>
+    <Version>3.0.0</Version>
+    <Authors>Pawel Idzikowski</Authors>
+    <Description>SharpSerializer is an open source XML and binary serializer for .NET Framework Full and Core. It works with Silverlight, Windows Phone, Windows RT, Xbox, Xamarin. It is especially usefull for tombstoning - i.e. binary serialization to isolated storage in WP7 or WinRT. With only one line of code it can serialize types like: Multidimensional array, nested array, array-of-arrays, polymorphic object (where value is inherited from the property type), generic type, generic listing (i.e. Dictionary, Collection) and many more... Refer to http://www.sharpserializer.com for details.</Description>
+    <Company>Polenter - Software Solutions</Company>
+    <Product>SharpSerializer</Product>
+    <PackageIconUrl>http://www.sharpserializer.com/SharpSerializer032.png</PackageIconUrl>
+    <PackageTags>serializer binary serializer xml serializer xml serialize binary serialize xml serialize serialization binary serialization xml serialization repository isolated storage tombstoning xbox winrt</PackageTags>
+    <PackageReleaseNotes>Open source XML and binary serializer for .NET, Silverlight, WinRT, WP7 (Windows Phone 7) and Xbox 360</PackageReleaseNotes>
+    <Copyright>Copyright ©  2010-2017, Pawel Idzikowski</Copyright>
+    <ApplicationIcon>SharpSerializer.ico</ApplicationIcon>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
 </Project>
