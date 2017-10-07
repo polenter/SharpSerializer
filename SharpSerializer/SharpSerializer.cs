@@ -204,7 +204,7 @@ namespace Polenter.Serialization
 
         #region Serializing/Deserializing methods
 
-#if !PORTABLE
+#if !NETSTANDARD1_0
         /// <summary>
         ///   Serializing to a file. File will be always new created and closed after the serialization.
         /// </summary>
@@ -258,7 +258,7 @@ namespace Polenter.Serialization
                 }
             }
         }
-#if !PORTABLE
+#if !NETSTANDARD1_0
         /// <summary>
         ///   Deserializing from the file. After deserialization the file will be closed.
         /// </summary>
