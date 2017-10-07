@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using Polenter.Serialization.Serializing;
 
@@ -175,8 +176,8 @@ namespace Polenter.Serialization.Advanced
         {
             foreach (Type attrType in AttributesToIgnore)
             {
-                object[] attributes = property.GetCustomAttributes(attrType, false);
-                if (attributes.Length > 0) 
+                var attributes = property.GetCustomAttributes(attrType, false);
+                if (attributes.Any()) 
                     return true;
             }
             return false;
@@ -191,7 +192,7 @@ namespace Polenter.Serialization.Advanced
         /// <returns></returns>
         protected virtual PropertyInfo[] GetAllProperties(Type type)
         {
-            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            return type.GetPublicInstanceProperties();
         }
 
         private static PropertyCache Cache

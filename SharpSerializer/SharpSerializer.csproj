@@ -19,4 +19,8 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;PORTABLE;NETSTANDARD1_0</DefineConstants>
+  </PropertyGroup>
+
 </Project>

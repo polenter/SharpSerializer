@@ -169,7 +169,7 @@ namespace Polenter.Serialization.Serializing
                                 do
                                 {
                                     elementTypeDefinitionFound = fillKeyAndElementType(typeInfo, examinedType);
-                                    examinedType = examinedType.BaseType;
+                                    examinedType = examinedType.BaseType();
                                     // until key and element definition was found, or the base typ is an object
                                 } while (!elementTypeDefinitionFound && examinedType!=null && examinedType!=typeof(object));
                             }
@@ -191,7 +191,7 @@ namespace Polenter.Serialization.Serializing
         /// <returns>true if the key and value definition was found</returns>
         private static bool fillKeyAndElementType(TypeInfo typeInfo, Type type)
         {
-            if (type.IsGenericType)
+            if (type.IsGenericType())
             {
                 Type[] arguments = type.GetGenericArguments();
 
