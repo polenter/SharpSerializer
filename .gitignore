@@ -1,0 +1,13 @@
+[Bb]in/
+[Oo]bj/
+_ReSharper.SharpSerializer
+*ReSharper*
+*.suo
+[Tt]est[Rr]esults/
+*.vsmdi
+LocalTestRun.testrunconfig
+*.user
+[Bb]ackup/
+.vs/
+.git/
+.github/
