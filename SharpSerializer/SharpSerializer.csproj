@@ -17,13 +17,31 @@
     <ApplicationIcon>SharpSerializer.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' and '$(TargetFramework)'=='netstandard1.0'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.0|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NETSTANDARD1_0</DefineConstants>
+    <DocumentationFile>bin\Debug\netstandard1.0\Polenter.SharpSerializer.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' and '$(TargetFramework)'=='netstandard1.3'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.0|AnyCPU'">
+    <DefineConstants>RELEASE;NETSTANDARD1_0</DefineConstants>
+    <DocumentationFile>bin\Release\netstandard1.0\Polenter.SharpSerializer.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NETSTANDARD1_3</DefineConstants>
+    <DocumentationFile>bin\Debug\netstandard1.3\Polenter.SharpSerializer.xml</DocumentationFile>
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
+    <DefineConstants>RELEASE;NETSTANDARD1_3</DefineConstants>
+    <DocumentationFile>bin\Release\netstandard1.3\Polenter.SharpSerializer.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NET452</DefineConstants>
+    <DocumentationFile>bin\Debug\net452\Polenter.SharpSerializer.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
+    <DefineConstants>RELEASE;NET452</DefineConstants>
+    <DocumentationFile>bin\Release\net452\Polenter.SharpSerializer.xml</DocumentationFile>    
+  </PropertyGroup>
 </Project>
