@@ -48,9 +48,8 @@ namespace Polenter.Serialization.Advanced
     {
         private PropertiesToIgnore _propertiesToIgnore;
         private IList<Type> _attributesToIgnore;
-#if !PORTABLE
+
         [ThreadStatic]
-#endif
         private static PropertyCache _cache;
 
         /// <summary>

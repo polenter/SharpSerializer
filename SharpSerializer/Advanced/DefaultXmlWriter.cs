@@ -154,11 +154,7 @@ namespace Polenter.Serialization.Advanced
         public void Close()
         {
             _writer.WriteEndDocument();
-#if PORTABLE
             _writer.Dispose();
-#else
-            _writer.Close();
-#endif
         }
 
         #endregion
