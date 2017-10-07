@@ -28,22 +28,11 @@
 
 using System;
 
-
-#if PORTABLE
-#else
-using System.Runtime.Serialization;
-#endif
-
 namespace Polenter.Serialization.Core
 {
     /// <summary>
     ///   Occurs if no instance of a type can be created. Maybe the type lacks on a public standard (parameterless) constructor?
     /// </summary>
-#if PORTABLE
-#elif SILVERLIGHT
-#else
-    [Serializable]
-#endif
     public class CreatingInstanceException : Exception
     {
         ///<summary>
@@ -66,19 +55,5 @@ namespace Polenter.Serialization.Core
         public CreatingInstanceException(string message, Exception innerException) : base(message, innerException)
         {
         }
-
-
-#if PORTABLE
-#elif SILVERLIGHT
-#else
-        /// <summary>
-        /// </summary>
-        /// <param name = "info"></param>
-        /// <param name = "context"></param>
-        protected CreatingInstanceException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-#endif
-
     }
 }
