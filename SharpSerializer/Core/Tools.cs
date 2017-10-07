@@ -71,7 +71,7 @@ namespace Polenter.Serialization.Core
                 // new since v.2.11
                 return true;
             }
-            if (type.IsEnum)
+            if (type.IsEnum())
             {
                 return true;
             }
@@ -81,7 +81,7 @@ namespace Polenter.Serialization.Core
                 return true;
             }
 
-            return type.IsPrimitive;
+            return type.IsPrimitive();
         }
 
         /// <summary>

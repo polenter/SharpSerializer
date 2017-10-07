@@ -217,7 +217,7 @@ namespace Polenter.Serialization.Core.Binary
             }
 
             // Enumeration
-            if (type.IsEnum)
+            if (type.IsEnum())
             {
                 writer.Write(Convert.ToInt32(value));
                 return;
