@@ -63,9 +63,9 @@
       <Project>{37FC6487-5704-40E3-BCE0-EDB8A2062BCB}</Project>
       <Name>HelloWorldApp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SharpSerializer.Library\SharpSerializer.Library.csproj">
-      <Project>{88AB738F-7A36-4C93-B808-B6CE2D3444B2}</Project>
-      <Name>SharpSerializer.Library</Name>
+    <ProjectReference Include="..\SharpSerializer\SharpSerializer.csproj">
+      <Project>{d9b06b37-64a0-45c5-a6b7-5af26652c8f0}</Project>
+      <Name>SharpSerializer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
