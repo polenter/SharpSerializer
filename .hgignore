@@ -10,3 +10,6 @@ glob:LocalTestRun.testrunconfig
 glob:*.user
 syntax: glob
 Backup/
+.vs/
+.git/
+.github/
