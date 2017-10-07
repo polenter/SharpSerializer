@@ -111,11 +111,7 @@ namespace Polenter.Serialization.Core.Binary
                 if (type == typeof (Char)) return reader.ReadChar();
                 if (type == typeof (DateTime)) return new DateTime(reader.ReadInt64());
                 if (type == typeof(Guid)) return new Guid(reader.ReadBytes(16));
-#if DEBUG || PORTABLE || SILVERLIGHT
-                if (type == typeof(decimal)) return readDecimal(reader);                
-#else
                 if (type == typeof (Decimal)) return reader.ReadDecimal();
-#endif
                 if (type == typeof (Double)) return reader.ReadDouble();
                 if (type == typeof (Int16)) return reader.ReadInt16();
                 if (type == typeof (Int32)) return reader.ReadInt32();
@@ -145,16 +141,6 @@ namespace Polenter.Serialization.Core.Binary
                 throw new SimpleValueParsingException(
                     string.Format("Invalid type: {0}. See details in the inner exception.", type), ex);
             }
-        }
-
-        private static object readDecimal(BinaryReader reader)
-        {
-            var bits = new int[4];
-            bits[0] = reader.ReadInt32();
-            bits[1] = reader.ReadInt32();
-            bits[2] = reader.ReadInt32();
-            bits[3] = reader.ReadInt32();
-            return new decimal(bits);
         }
 
         private static bool isType(Type type)
