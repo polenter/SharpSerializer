@@ -27,22 +27,12 @@
 #endregion
 
 using System;
-#if PORTABLE
-#elif SILVERLIGHT
-#else
-    using System.Runtime.Serialization;
-#endif
 
 namespace Polenter.Serialization.Core
 {
     /// <summary>
     ///   Occures if the simple value can not be restored from its text representation
     /// </summary>
-#if PORTABLE
-#elif SILVERLIGHT
-#else
-    [Serializable]
-#endif
     public class SimpleValueParsingException : Exception
     {
         ///<summary>
@@ -65,17 +55,5 @@ namespace Polenter.Serialization.Core
         public SimpleValueParsingException(string message, Exception innerException) : base(message, innerException)
         {
         }
-
-#if PORTABLE
-#elif SILVERLIGHT
-#else
-        /// <summary>
-        /// </summary>
-        /// <param name = "info"></param>
-        /// <param name = "context"></param>
-        protected SimpleValueParsingException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-#endif
     }
 }
