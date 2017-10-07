@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer.Tests", "Sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer.Library.Portable", "SharpSerializer.Library.Portable\SharpSerializer.Library.Portable.csproj", "{B0FB4215-357F-4FAF-8EE9-93FD684B4B3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer", "SharpSerializer\SharpSerializer.csproj", "{D9B06B37-64A0-45C5-A6B7-5AF26652C8F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpSerializer", "SharpSerializer\SharpSerializer.csproj", "{D9B06B37-64A0-45C5-A6B7-5AF26652C8F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
