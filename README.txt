@@ -1,6 +1,4 @@
-﻿###########################
-SharpSerializer 3.x
-###########################
+﻿# SharpSerializer 3.x #
 
 SharpSerializer is an open source XML and binary serializer for .NET. 
 With only one line of code it can serialize types like: multidimensional array, nested array, array-of-arrays, polymorphic object (where value is inherited from the property type), generic type, generic listing (i.e. dictionary, collection) and many more...
@@ -15,9 +13,7 @@ https://github.com/polenter/SharpSerializer/blob/master/LICENSE.txt
 
 
 
-###########################
-Prerequisites
-###########################
+## Prerequisites ##
 
 Development
 Due to the new syntax of the csproj file you need Visual Studio 2017 for development of SharpSerializer.
@@ -44,9 +40,7 @@ For .NET Framework 4.5.2 (and above) and all .NET platforms implementing .NET St
 
 
 
-###########################
-Installing
-###########################
+## Installing ##
 
 Using NuGet is recommended.
 
@@ -58,9 +52,7 @@ dotnet add package SharpSerializer
 
 
 
-###########################
-Usage
-###########################
+## Usage ##
 
 var obj = CreateMyVerySophisticatedObject();
 var serializer = new SharpSerializer();
@@ -72,9 +64,7 @@ http://sharpserializer.com/en/tutorial/
 
 
 
-###########################
-Usage Limitations
-###########################
+## Usage Limitations ##
 
 SharpSerializer serializes only public properties. If you like to serialize fields, they have to be wrapped in properties.
 
@@ -85,9 +75,7 @@ https://www.codeproject.com/Articles/240621/How-to-serialize-data-effectively-Cu
 
 
 
-###########################
-Breaking Changes
-###########################
+## Breaking Changes ##
 
 Comparing to SharpSerializer 2.x
 
@@ -104,9 +92,7 @@ The BSD License (BSD) was changed to MIT License
 
 
 
-###########################
-Deployment
-###########################
+## Deployment ##
 
 The following libraries should be attached to your deployment package:
 *   Polenter.SharpSerializer.dll
@@ -118,9 +104,7 @@ The content of the LICENSE.txt (MIT License) should be also attached to your sof
 
 
 
-###########################
-Contributing
-###########################
+## Contributing ##
 
 There are some tests concerning deploying and using SharpSerializer 3.x on different platforms, e.g. .NET Framework 4.5.2, .NET Core 1.0, 2.0 and Xamarin.
 More tests on different platforms are however appreciated.
@@ -129,17 +113,13 @@ Additional contributors are welcome.
 
 
 
-###########################
-Authors
-###########################
+## Authors ##
 
 Pawel Idzikowski, polenter (owner)
 
 
 
-###########################
-License
-###########################
+## License ##
 
 This project is licensed under the MIT License - see LICENSE.txt file for details.
 
