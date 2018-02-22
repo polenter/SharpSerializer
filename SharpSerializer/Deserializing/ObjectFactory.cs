@@ -38,12 +38,30 @@ namespace Polenter.Serialization.Deserializing
     /// </summary>
     public sealed class ObjectFactory
     {
+        public ObjectFactory()
+        : this(new DefaultInstanceCreator())
+        {
+
+        }
+
+        public ObjectFactory(IInstanceCreator instanceCreator)
+        {
+          this.InstanceCreator = instanceCreator;
+        }
+
         private readonly object[] _emptyObjectArray = new object[0];
 
         /// <summary>
         /// Contains already created objects. Is used for reference resolving.
         /// </summary>
         private readonly Dictionary<int, object > _objectCache = new Dictionary<int, object>();
+
+        /// <summary>
+        /// Gets or sets the instance creator.
+        /// </summary>
+        /// <value>The instance creator.</value>
+        private IInstanceCreator InstanceCreator { get; set; }
+
 
         /// <summary>
         ///   Builds object from property
@@ -144,7 +162,7 @@ namespace Polenter.Serialization.Deserializing
 
         private object createObjectFromComplexProperty(ComplexProperty property)
         {
-            object obj = Tools.CreateInstance(property.Type);
+            object obj = this.InstanceCreator.CreateInstance(property.Type);
 
             if (property.Reference != null)
             {
@@ -163,7 +181,7 @@ namespace Polenter.Serialization.Deserializing
         private object createObjectFromCollectionProperty(CollectionProperty property)
         {
             Type type = property.Type;
-            object collection = Tools.CreateInstance(type);
+            object collection = this.InstanceCreator.CreateInstance(type);
 
             if (property.Reference != null)
             {
@@ -200,7 +218,7 @@ namespace Polenter.Serialization.Deserializing
         /// <returns></returns>
         private object createObjectFromDictionaryProperty(DictionaryProperty property)
         {
-            object dictionary = Tools.CreateInstance(property.Type);
+            object dictionary = this.InstanceCreator.CreateInstance(property.Type);
 
             if (property.Reference != null)
             {

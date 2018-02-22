@@ -80,6 +80,12 @@ namespace Polenter.Serialization.Core
         ///   PublicKeyToken=.... will be inserted to the type name
         /// </summary>
         public bool IncludePublicKeyTokenInTypeName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the instance creator that will be used for object creation.  Use this setting to supply a different creator, such as an AutoFac instance creator.
+        /// </summary>
+        /// <value>The instance creator.</value>
+        public IInstanceCreator InstanceCreator { get; set; }
     }
 
     ///<summary>

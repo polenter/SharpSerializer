@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FA9C9770-1F72-4C3D-925E-60DFC8599ABD}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,6 +13,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer.Tests", "SharpSerializer.Tests\SharpSerializer.Tests.csproj", "{6D44C26F-76A3-48F0-A29A-406603B72695}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpSerializer", "SharpSerializer\SharpSerializer.csproj", "{D9B06B37-64A0-45C5-A6B7-5AF26652C8F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer.AutofacInstanceCreator", "SharpSerializer.AutofacInstanceCreator\SharpSerializer.AutofacInstanceCreator.csproj", "{9B0DE06D-36DC-48BA-B7B6-C5450666C6E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSerializer.AutofacInstanceCreator.Tests", "SharpSerializer.AutofacInstanceCreator.Tests\SharpSerializer.AutofacInstanceCreator.Tests.csproj", "{C480C73C-271A-4127-B13A-AB89942FCDA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +36,14 @@ Global
 		{D9B06B37-64A0-45C5-A6B7-5AF26652C8F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9B06B37-64A0-45C5-A6B7-5AF26652C8F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9B06B37-64A0-45C5-A6B7-5AF26652C8F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B0DE06D-36DC-48BA-B7B6-C5450666C6E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B0DE06D-36DC-48BA-B7B6-C5450666C6E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B0DE06D-36DC-48BA-B7B6-C5450666C6E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B0DE06D-36DC-48BA-B7B6-C5450666C6E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C480C73C-271A-4127-B13A-AB89942FCDA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C480C73C-271A-4127-B13A-AB89942FCDA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C480C73C-271A-4127-B13A-AB89942FCDA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C480C73C-271A-4127-B13A-AB89942FCDA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
