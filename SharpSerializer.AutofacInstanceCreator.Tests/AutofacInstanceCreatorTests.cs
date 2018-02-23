@@ -13,8 +13,8 @@
     public void CreateInstanceWithAutofacCreatesRegisteredType()
     {
       ContainerBuilder builder = new ContainerBuilder();
-      builder.RegisterType<TestObject>().As<ITestObject>();
-      builder.RegisterType<TestChild>().As<ITestChild>();
+      builder.RegisterType<TestObject>().AsImplementedInterfaces();
+      builder.RegisterType<TestChild>().AsImplementedInterfaces();
       IContainer container = builder.Build();
 
       string serializeResult = this.Serialize(container, new TestObject());

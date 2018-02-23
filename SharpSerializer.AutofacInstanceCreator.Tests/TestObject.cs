@@ -8,7 +8,7 @@ namespace SharpSerializer.AutofacInstanceCreator.Tests
 {
   using Polenter.Serialization;
 
-  public class TestObject : ITestObject
+  public class TestObject : ITestObject, IMyInterface
   {
     public TestObject()
     {

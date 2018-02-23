@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutofacInstanceCreatorTests.cs" />
+    <Compile Include="IMyInterface.cs" />
     <Compile Include="ITestChild.cs" />
     <Compile Include="ITestObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -264,6 +264,11 @@ namespace Polenter.Serialization.Deserializing
                 PropertyInfo propertyInfo = obj.GetType().GetProperty(property.Name);
                 if (propertyInfo == null) continue;
 
+                if (propertyInfo.CanWrite == false)
+                {
+                  continue;
+                }
+
                 object value = CreateObject(property);
                 if (value == null) continue;
 
