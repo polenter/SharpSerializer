@@ -136,8 +136,16 @@ namespace Polenter.Serialization
             set { _rootName = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the instance creator for creating objects.
+        /// </summary>
+        /// <value>The instance creator.</value>
+        public IInstanceCreator InstanceCreator { get; set; }
+
         private void initialize(SharpSerializerXmlSettings settings)
         {
+            this.InstanceCreator = settings.InstanceCreator ?? new DefaultInstanceCreator();
+
             // PropertiesToIgnore
             PropertyProvider.PropertiesToIgnore = settings.AdvancedSettings.PropertiesToIgnore;
             PropertyProvider.AttributesToIgnore = settings.AdvancedSettings.AttributesToIgnore;
@@ -167,6 +175,8 @@ namespace Polenter.Serialization
 
         private void initialize(SharpSerializerBinarySettings settings)
         {
+            this.InstanceCreator = settings.InstanceCreator ?? new DefaultInstanceCreator();
+
             // PropertiesToIgnore
             PropertyProvider.PropertiesToIgnore = settings.AdvancedSettings.PropertiesToIgnore;
             PropertyProvider.AttributesToIgnore = settings.AdvancedSettings.AttributesToIgnore;
@@ -292,7 +302,7 @@ namespace Polenter.Serialization
                     _deserializer.Close();
 
                     // create object from Property
-                    var factory = new ObjectFactory();
+                    var factory = new ObjectFactory(this.InstanceCreator);
                     return factory.CreateObject(property);
                 }
                 catch (Exception exception)
