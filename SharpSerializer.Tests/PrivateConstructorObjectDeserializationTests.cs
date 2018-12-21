@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polenter.Serialization.Core;
 
 namespace Polenter.Serialization
 {
@@ -44,6 +45,42 @@ namespace Polenter.Serialization
                 Assert.IsNotNull(deserialized);
                 Assert.AreEqual(data.Name, deserialized.Name);
                 Assert.AreEqual(data.Complex.Name, deserialized.Complex.Name);
+            }
+        }
+
+        public class ClassWithoutParameterlessConstructor
+        {
+
+            public string Name { get; private set; }
+
+            public virtual ClassWithoutParameterlessConstructor Complex { get; set; }
+
+            public ClassWithoutParameterlessConstructor(String name)
+            {
+                Name = name;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DeserializingException))]
+        public void CannotDeserializeClassWithoutParameterlessConstructor()
+        {
+            var child = new ClassWithoutParameterlessConstructor("child");
+
+            var data = new ClassWithoutParameterlessConstructor("MyName")
+            {
+                Complex = child
+            };
+
+            var settings = new SharpSerializerXmlSettings();
+            var serializer = new SharpSerializer(settings);
+            using (var stream = new MemoryStream())
+            {
+                serializer.Serialize(data, stream);
+
+                stream.Position = 0;
+
+                serializer.Deserialize(stream);
             }
         }
     }

@@ -157,7 +157,7 @@ namespace Polenter.Serialization.Core
             {
                 throw new CreatingInstanceException(
                     string.Format(
-                        "Error during creating an object. Please check if the type \"{0}\" has public parameterless constructor, or if the settings IncludeAssemblyVersionInTypeName, IncludeCultureInTypeName, IncludePublicKeyTokenInTypeName are set to true. Details are in the inner exception.",
+                        "Error during creating an object. Please check if the type \"{0}\" has a parameterless constructor, or if the settings IncludeAssemblyVersionInTypeName, IncludeCultureInTypeName, IncludePublicKeyTokenInTypeName are set to true. Details are in the inner exception.",
                         type.AssemblyQualifiedName), ex);
             }
         }
