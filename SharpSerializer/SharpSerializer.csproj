@@ -3,14 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.3;net452</TargetFrameworks>
     <RootNamespace>Polenter.Serialization</RootNamespace>
-    <AssemblyName>Polenter.SharpSerializer</AssemblyName>
-    <PackageId>SharpSerializer</PackageId>
-    <Version>3.0.1</Version>
-    <Authors>Pawel Idzikowski</Authors>
-    <Description>SharpSerializer is an open source XML and binary serializer for .NET.
+    <AssemblyName>Polenter.SharpSerializer.Mod</AssemblyName>
+    <PackageId>SharpSerializer-mod</PackageId>
+    <Version>3.0.1.2</Version>
+    <Authors>Pawel Idzikowski;DocKuro</Authors>
+    <Description> This is a modification of SharpSerializer to allow the deserialization of objects with private parameterless constructors and no public ones.
+        SharpSerializer is an open source XML and binary serializer for .NET.
 With only one line of code it can serialize types like: multidimensional array, nested array, array-of-arrays, polymorphic object (where value is inherited from the property type), generic type, generic listing (i.e. dictionary, collection) and many more...</Description>
     <Company>Polenter - Software Solutions</Company>
-    <Product>SharpSerializer</Product>
+    <Product>SharpSerializer-mod</Product>
     <PackageIconUrl>http://www.sharpserializer.com/SharpSerializer032.png</PackageIconUrl>
     <PackageTags>serializer binary serializer xml serializer xml serialize binary serialize xml serialize serialization binary serialization xml serialization repository isolated storage tombstoning xbox winrt</PackageTags>
     <PackageReleaseNotes>The NuGet package is based on .NET Standard 1.0 and therefore the minimum system requirements are: .NET Core 1.0, .NET 4.5, Mono 4.6, Xamarin.iOS 10.0, Xamarin.Mac 3.0, Xamarin Android 7.0, UWP 10.0, WinRT 8.0, Windows Phone 8.1 and Windows Phone Silverlight 8.0 and above</PackageReleaseNotes>
@@ -19,8 +20,8 @@ With only one line of code it can serialize types like: multidimensional array, 
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/polenter/SharpSerializer</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/polenter/SharpSerializer.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/DocKuro/SharpSerializer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DocKuro/SharpSerializer.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseUrl>https://github.com/polenter/SharpSerializer/blob/master/LICENSE.txt</PackageLicenseUrl>
   </PropertyGroup>
@@ -47,6 +48,6 @@ With only one line of code it can serialize types like: multidimensional array, 
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
     <DefineConstants>RELEASE;NET452</DefineConstants>
-    <DocumentationFile>bin\Release\net452\Polenter.SharpSerializer.xml</DocumentationFile>    
+    <DocumentationFile>bin\Release\net452\Polenter.SharpSerializer.xml</DocumentationFile>
   </PropertyGroup>
 </Project>
