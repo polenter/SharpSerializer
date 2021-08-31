@@ -46,8 +46,7 @@ namespace Polenter.Serialization.Serializing
         /// <summary>
         /// Contains reference targets.
         /// </summary>
-        private readonly Dictionary<object, ReferenceTargetProperty> _propertyCache =
-            new Dictionary<object, ReferenceTargetProperty>();
+        private readonly Dictionary<object, ReferenceTargetProperty> _propertyCache;
 
         /// <summary>
         /// It will be incremented as neccessary
@@ -58,8 +57,18 @@ namespace Polenter.Serialization.Serializing
         /// </summary>
         /// <param name = "propertyProvider">provides all important properties of the decomposed object</param>
         public PropertyFactory(PropertyProvider propertyProvider)
+            :this (propertyProvider, EqualityComparer<object>.Default)
+        {
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name = "propertyProvider">provides all important properties of the decomposed object</param>
+        /// <param name="objectComparer">A Comparer, used to define objects with the same references</param>
+        public PropertyFactory(PropertyProvider propertyProvider, IEqualityComparer<object> objectComparer)
         {
             _propertyProvider = propertyProvider;
+            _propertyCache = new Dictionary<object, ReferenceTargetProperty>(objectComparer);
         }
 
         /// <summary>

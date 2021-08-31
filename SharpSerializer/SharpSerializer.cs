@@ -38,6 +38,7 @@ using Polenter.Serialization.Core;
 using Polenter.Serialization.Deserializing;
 using Polenter.Serialization.Serializing;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace Polenter.Serialization
 {
@@ -51,6 +52,7 @@ namespace Polenter.Serialization
         private PropertyProvider _propertyProvider;
         private string _rootName;
         private IPropertySerializer _serializer;
+        private IEqualityComparer<object> _objectComparer;
 
         /// <summary>
         ///   Standard Constructor. Default is Xml serializing
@@ -135,6 +137,19 @@ namespace Polenter.Serialization
             }
             set { _rootName = value; }
         }
+
+        /// <summary>
+        /// A Comparer, used to define objects with the same references
+        /// </summary>
+        public IEqualityComparer<object> ObjectComparer
+		{
+            get
+            {
+                if (_objectComparer == null) _objectComparer = EqualityComparer<object>.Default;
+                return _objectComparer;
+            }
+            set { _objectComparer = value; }
+		}
 
         /// <summary>
         /// Gets or sets the instance creator for creating objects.
@@ -253,7 +268,7 @@ namespace Polenter.Serialization
 
             lock (_syncObj)
             {
-                var factory = new PropertyFactory(PropertyProvider);
+                var factory = new PropertyFactory(PropertyProvider, ObjectComparer);
 
                 Property property = factory.CreateProperty(RootName, data);
 
