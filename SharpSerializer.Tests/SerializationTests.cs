@@ -239,7 +239,64 @@ namespace Polenter.Serialization
             Assert.AreEqual(parent.Guid, loaded.Guid, "same guid");
         }
         #endregion
+        
+        #region Serial_DateTimeOffset with helpers
+        /// <summary>
+        /// Local testclass to be serialized
+        /// </summary>
+        public class ClassWithDateTimeOffset
+        {
+            public DateTimeOffset Date { get; set; }
+        }
 
+        [TestMethod]
+        public void XmlSerial_ShouldSerializeDateTimeOffset()
+        {
+            var parent = new ClassWithDateTimeOffset
+            {
+                Date = DateTimeOffset.Now,
+            };
+
+            var stream = new MemoryStream();
+            var settings = new SharpSerializerXmlSettings();
+            var serializer = new SharpSerializer(settings);
+
+            serializer.Serialize(parent, stream);
+
+            stream.Position = 0;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(stream);
+            System.Console.WriteLine(doc.InnerXml);
+
+            serializer = new SharpSerializer(settings);
+            stream.Position = 0;
+            ClassWithDateTimeOffset loaded = serializer.Deserialize(stream) as ClassWithDateTimeOffset;
+
+            Assert.AreEqual(parent.Date, loaded.Date, "same date");
+        }
+
+        [TestMethod]
+        public void BinSerial_ShouldSerializeDateTimeOffset()
+        {
+            var parent = new ClassWithDateTimeOffset
+            {
+                Date = DateTimeOffset.Now,
+            };
+
+            var stream = new MemoryStream();
+            var settings = new SharpSerializerBinarySettings(BinarySerializationMode.SizeOptimized);
+            var serializer = new SharpSerializer(settings);
+
+            serializer.Serialize(parent, stream);
+
+
+            serializer = new SharpSerializer(settings);
+            stream.Position = 0;
+            ClassWithDateTimeOffset loaded = serializer.Deserialize(stream) as ClassWithDateTimeOffset;
+
+            Assert.AreEqual(parent.Date, loaded.Date, "same date");
+        }
+        #endregion
 
         #region BinSerial
         [TestMethod]

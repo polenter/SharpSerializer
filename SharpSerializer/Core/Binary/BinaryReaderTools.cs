@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Polenter.Serialization.Core.Binary
@@ -110,7 +111,8 @@ namespace Polenter.Serialization.Core.Binary
                 if (type == typeof (Byte)) return reader.ReadByte();
                 if (type == typeof (Char)) return reader.ReadChar();
                 if (type == typeof (DateTime)) return new DateTime(reader.ReadInt64());
-                if (type == typeof(Guid)) return new Guid(reader.ReadBytes(16));
+                if (type == typeof (DateTimeOffset)) return DateTimeOffset.ParseExact(reader.ReadString(), "O", new DateTimeFormatInfo());
+                if (type == typeof (Guid)) return new Guid(reader.ReadBytes(16));
                 if (type == typeof (Decimal)) return reader.ReadDecimal();
                 if (type == typeof (Double)) return reader.ReadDouble();
                 if (type == typeof (Int16)) return reader.ReadInt16();

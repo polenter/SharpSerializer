@@ -52,6 +52,10 @@ namespace Polenter.Serialization.Core
             {
                 return true;
             }
+            if (type == typeof(DateTimeOffset))
+            {
+                return true;
+            }
             if (type == typeof (TimeSpan))
             {
                 return true;

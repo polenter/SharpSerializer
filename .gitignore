@@ -11,3 +11,4 @@ LocalTestRun.testrunconfig
 .vs/
 .git/
 .github/
+packages/
