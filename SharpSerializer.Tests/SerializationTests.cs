@@ -247,6 +247,8 @@ namespace Polenter.Serialization
         public class ClassWithDateTimeOffset
         {
             public DateTimeOffset Date { get; set; }
+            public DateTime DateTimeLocal { get; set; }
+            public DateTime DateTimeUtc { get; set; }
         }
 
         [TestMethod]
@@ -255,6 +257,8 @@ namespace Polenter.Serialization
             var parent = new ClassWithDateTimeOffset
             {
                 Date = DateTimeOffset.Now,
+                DateTimeLocal = new DateTime(2021, 12, 11, 10, 9, 8, DateTimeKind.Local),
+                DateTimeUtc = new DateTime(2021, 12, 11, 10, 9, 8, DateTimeKind.Utc)
             };
 
             var stream = new MemoryStream();
@@ -272,7 +276,14 @@ namespace Polenter.Serialization
             stream.Position = 0;
             ClassWithDateTimeOffset loaded = serializer.Deserialize(stream) as ClassWithDateTimeOffset;
 
-            Assert.AreEqual(parent.Date, loaded.Date, "same date");
+            Assert.AreEqual(parent.Date, loaded.Date);
+
+            // Additional tests concerning
+            // https://github.com/polenter/SharpSerializer/issues/17#issuecomment-994484009
+            Assert.AreEqual(parent.DateTimeLocal, loaded.DateTimeLocal);
+            Assert.AreEqual(parent.DateTimeLocal.Kind, loaded.DateTimeLocal.Kind);
+            Assert.AreEqual(parent.DateTimeUtc, loaded.DateTimeUtc);
+            Assert.AreEqual(parent.DateTimeUtc.Kind, loaded.DateTimeUtc.Kind);
         }
 
         [TestMethod]
