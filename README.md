@@ -15,10 +15,6 @@ https://github.com/polenter/SharpSerializer/blob/master/LICENSE.txt
 
 ## Prerequisites ##
 
-Development
-Due to the new syntax of the csproj file you need Visual Studio 2017 for development of SharpSerializer.
-
-
 Runtime
 SharpSerializer requires a .NET platform implementing .NET Standard 1.0 or above.
 
@@ -66,9 +62,9 @@ http://sharpserializer.com/en/tutorial/
 
 ## Usage Limitations ##
 
-SharpSerializer serializes only public properties. If you like to serialize fields, they have to be wrapped in properties.
+SharpSerializer serializes only public properties. If you like to serialize fields or private properties, they have to be wrapped in public properties.
 
-SharpSerializer can deserialize only types providing the default constructor.
+SharpSerializer can deserialize only types providing public or private default constructor.
 
 Please refer to the following article for a workaround:
 https://www.codeproject.com/Articles/240621/How-to-serialize-data-effectively-Custom-serializa
@@ -98,9 +94,7 @@ The following libraries should be attached to your deployment package:
 *   Polenter.SharpSerializer.dll
 
 The following copyright notice should be attached to your software (e.g. about box):
-This software includes SharpSerializer - Copyright (c) 2010-2017 Pawel Idzikowski
-
-The content of the LICENSE.txt (MIT License) should be also attached to your software, e.g. as a link, informing people under what conditions SharpSerializer is licensed, even if your software uses other license model.
+This software includes SharpSerializer - Copyright (c) 2010-2021 Pawel Idzikowski
 
 
 
@@ -109,7 +103,8 @@ The content of the LICENSE.txt (MIT License) should be also attached to your sof
 There are some tests concerning deploying and using SharpSerializer 3.x on different platforms, e.g. .NET Framework 4.5.2, .NET Core 1.0, 2.0 and Xamarin.
 More tests on different platforms are however appreciated.
 
-Additional contributors are welcome.
+Additional contributors are welcome. 
+Just change source code, create unit tests and request a pull.
 
 
 
