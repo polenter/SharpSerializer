@@ -89,7 +89,7 @@ namespace Polenter.Serialization.Advanced
 
             if (value is DateTimeOffset)
             {
-                return ((DateTimeOffset)value).ToString("O");
+                return ((DateTimeOffset)value).ToString("O", _cultureInfo.DateTimeFormat);
             }
 
             // Array of byte

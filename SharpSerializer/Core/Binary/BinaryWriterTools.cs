@@ -27,6 +27,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Polenter.Serialization.Core.Binary
@@ -156,7 +157,7 @@ namespace Polenter.Serialization.Core.Binary
             }
             if (type == typeof(DateTimeOffset))
             {
-                writer.Write(((DateTimeOffset)value).ToString("O"));
+                writer.Write(((DateTimeOffset)value).ToString("O", DateTimeFormatInfo.InvariantInfo));
                 return;
             }
             if (type == typeof(Guid))
