@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard1.3;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard1.0;netstandard1.3;netcoreapp3.1;net452</TargetFrameworks>
     <RootNamespace>Polenter.Serialization</RootNamespace>
     <AssemblyName>Polenter.SharpSerializer</AssemblyName>
     <PackageId>SharpSerializer</PackageId>
@@ -40,6 +40,14 @@ With only one line of code it can serialize types like: multidimensional array, 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
     <DefineConstants>RELEASE;NETSTANDARD1_3</DefineConstants>
     <DocumentationFile>bin\Release\netstandard1.3\Polenter.SharpSerializer.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP3_1</DefineConstants>
+    <DocumentationFile>bin\Debug\netcoreapp3.1\Polenter.SharpSerializer.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
+    <DefineConstants>RELEASE;NETCOREAPP3_1</DefineConstants>
+    <DocumentationFile>bin\Release\netcoreapp3.1\Polenter.SharpSerializer.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NET452</DefineConstants>
