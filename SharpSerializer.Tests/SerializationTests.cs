@@ -42,6 +42,16 @@ namespace Polenter.Serialization
 
             [MyExcludeAttribute]
             public virtual Class2BeSerialized ComplexPrivateAttribute { get; set; }
+
+            public Class2BeIgnored IgnoredType { get; set; }
+        }
+
+        /// <summary>
+        /// Local testclass to be ignored
+        /// </summary>
+        public class Class2BeIgnored
+        {
+            public string Name { get; set; }
         }
 
         [TestMethod]
@@ -62,6 +72,10 @@ namespace Polenter.Serialization
                 ComplexSystemAttribute = child,
                 ComplexPrivateAttribute = child,
                 ComplexRule = child,
+                IgnoredType = new Class2BeIgnored
+                {
+                    Name = "Ignored"
+                }
             };
 
             /*
@@ -91,6 +105,8 @@ namespace Polenter.Serialization
             Assert.AreEqual(0, doc.SelectNodes("//Complex[@name='ComplexRule']").Count, "ComplexRule");
             Assert.AreEqual(0, doc.SelectNodes("//Complex[@name='ComplexSystemAttribute']").Count, "ComplexSystemAttribute");
             Assert.AreEqual(0, doc.SelectNodes("//Complex[@name='ComplexPrivateAttribute']").Count, "ComplexPrivateAttribute");
+
+            Assert.AreEqual(0, doc.SelectNodes("//Complex[@name='IgnoredType']").Count, "IgnoredType");
         }
 
         private static XmlDocument Save(object data)
@@ -100,6 +116,8 @@ namespace Polenter.Serialization
 
             settings.AdvancedSettings.PropertiesToIgnore.Add(typeof(Class2BeSerialized), "NameRule");
             settings.AdvancedSettings.PropertiesToIgnore.Add(typeof(Class2BeSerialized), "ComplexRule");
+
+            settings.AdvancedSettings.PropertyTypesToIgnore.Add(typeof(Class2BeIgnored));
 
             settings.AdvancedSettings.AttributesToIgnore.Add(typeof(MyExcludeAttribute));
             // this does not work
