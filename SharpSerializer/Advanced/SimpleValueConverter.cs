@@ -148,7 +148,11 @@ namespace Polenter.Serialization.Advanced
 
                 if (type == typeof(Guid)) return new Guid(text);
                 // Enumeration
+#if NETSTANDARD1_0 || NETSTANDARD1_3
                 if (type.IsEnum()) return Enum.Parse(type, text, true);
+#else
+                if (type.IsEnum) return Enum.Parse(type, text, true);
+#endif
                 // Array of byte
                 if (type == typeof(byte[]))
                 {

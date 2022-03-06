@@ -223,7 +223,11 @@ namespace Polenter.Serialization.Core.Binary
             }
 
             // Enumeration
+#if NETSTANDARD1_0 || NETSTANDARD1_3
             if (type.IsEnum())
+#else
+            if (type.IsEnum)
+#endif
             {
                 writer.Write(Convert.ToInt32(value));
                 return;

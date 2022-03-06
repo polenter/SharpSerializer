@@ -75,7 +75,11 @@ namespace Polenter.Serialization.Core
                 // new since v.2.11
                 return true;
             }
+#if NETSTANDARD1_0 || NETSTANDARD1_3
             if (type.IsEnum())
+#else
+            if (type.IsEnum)
+#endif
             {
                 return true;
             }
@@ -85,7 +89,11 @@ namespace Polenter.Serialization.Core
                 return true;
             }
 
+#if NETSTANDARD1_0 || NETSTANDARD1_3
             return type.IsPrimitive();
+#else
+            return type.IsPrimitive;
+#endif
         }
 
         /// <summary>

@@ -6,6 +6,13 @@ namespace System
 {
     public static class TypeExtensions
     {
+        public static PropertyInfo[] GetPublicInstanceProperties(this Type type)
+        {
+            var result = type.GetRuntimeProperties().ToArray();
+            return result;
+        }
+
+#if NETSTANDARD1_0 || NETSTANDARD1_3
         public static bool IsEnum(this Type type)
         {
             return type.GetTypeInfo().IsEnum;
@@ -40,12 +47,6 @@ namespace System
             return type.GetRuntimeProperty(propertyName);
         }
 
-        public static PropertyInfo[] GetPublicInstanceProperties(this Type type)
-        {
-            var result = type.GetRuntimeProperties().ToArray();
-            return result;
-        }
-
         public static Type BaseType(this Type type)
         {
             return type.GetTypeInfo().BaseType;
@@ -60,6 +61,6 @@ namespace System
         {
             return type.GenericTypeArguments;
         }
-
+#endif
     }
 }

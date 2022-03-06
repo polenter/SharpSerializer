@@ -127,7 +127,11 @@ namespace Polenter.Serialization.Core.Binary
                 if (type == typeof (TimeSpan)) return new TimeSpan(reader.ReadInt64());
 
                 // Enumeration
+#if NETSTANDARD1_0 || NETSTANDARD1_3
                 if (type.IsEnum()) return readEnumeration(type, reader);
+#else
+                if (type.IsEnum) return readEnumeration(type, reader);
+#endif
 
                 // Type
                 if (isType(type))
