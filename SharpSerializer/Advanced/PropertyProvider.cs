@@ -1,4 +1,4 @@
-#region Copyright © 2010 Pawel Idzikowski [idzikowski@sharpserializer.com]
+#region Copyright Â© 2010 Pawel Idzikowski [idzikowski@sharpserializer.com]
 
 //  ***********************************************************************
 //  Project: sharpSerializer
@@ -160,7 +160,16 @@ namespace Polenter.Serialization.Advanced
         protected virtual bool IgnoreProperty(Serialization.Serializing.TypeInfo info, PropertyInfo property)
         {
             // Soll die Eigenschaft ignoriert werden
-            if (PropertiesToIgnore.Contains(info.Type, property.Name) || PropertyTypesToIgnore.Contains(property.PropertyType))
+            if (PropertyTypesToIgnore.Contains(property.PropertyType))
+            {
+                return true;
+            }
+            
+            if (PropertiesToIgnore.Contains(info.Type, property.Name))
+            {
+                return true;
+            }            
+
             {
                 return true;
             }
