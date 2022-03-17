@@ -1,4 +1,4 @@
-#region Copyright © 2010 Pawel Idzikowski [idzikowski@sharpserializer.com]
+#region Copyright Â© 2010 Pawel Idzikowski [idzikowski@sharpserializer.com]
 
 //  ***********************************************************************
 //  Project: sharpSerializer
@@ -43,11 +43,13 @@ namespace Polenter.Serialization.Advanced
     ///   
     /// Its methods GetAllProperties and IgnoreProperty can be
     ///   overwritten in an inherited class to customize its functionality. 
-    ///   Its property PropertiesToIgnore contains properties, which are ignored during the serialization.
+    ///   Its property PropertiesToIgnore contains properties and its property PropertyTypesToIgnore
+    ///   container types, which are ignored during the serialization.
     /// </summary>
     public class PropertyProvider
     {
         private PropertiesToIgnore _propertiesToIgnore;
+        private IList<Type> _propertyTypesToIgnore;
         private IList<Type> _attributesToIgnore;
 
         [ThreadStatic]
@@ -73,6 +75,23 @@ namespace Polenter.Serialization.Advanced
                 return _propertiesToIgnore;
             }
             set { _propertiesToIgnore = value; }
+        }
+
+        /// <summary>
+        ///   Which types should be ignored
+        /// </summary>
+        /// <remarks>
+        /// Sometimes you want to ignore some types during the serialization.
+        // To ignore a type add these types to the list PropertyTypesToIgnore.
+        /// </remarks>
+        public IList<Type> PropertyTypesToIgnore
+        {
+            get
+            {
+                if (_propertyTypesToIgnore == null) _propertyTypesToIgnore = new List<Type>();
+                return _propertyTypesToIgnore;
+            }
+            set { _propertyTypesToIgnore = value; }
         }
 
         /// <summary>
@@ -133,6 +152,7 @@ namespace Polenter.Serialization.Advanced
         /// <returns>
         ///   true if the property:
         ///   - is in the PropertiesToIgnore,
+        ///   - is in the PropertyTypesToIgnore,
         ///   - contains ExcludeFromSerializationAttribute,
         ///   - does not have it's set or get accessor
         ///   - is indexer
@@ -140,7 +160,16 @@ namespace Polenter.Serialization.Advanced
         protected virtual bool IgnoreProperty(Serialization.Serializing.TypeInfo info, PropertyInfo property)
         {
             // Soll die Eigenschaft ignoriert werden
+            if (PropertyTypesToIgnore.Contains(property.PropertyType))
+            {
+                return true;
+            }
+            
             if (PropertiesToIgnore.Contains(info.Type, property.Name))
+            {
+                return true;
+            }            
+
             {
                 return true;
             }

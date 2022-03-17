@@ -157,7 +157,7 @@ namespace HelloWorldApp
             settings.IncludeCultureInTypeName = true;
             settings.IncludePublicKeyTokenInTypeName = true;
 
-            
+
 
             // ADVANCED SETTINGS
             // Most of the classes needed to alter these settings are in the namespace Polenter.Serialization.Advanced
@@ -173,7 +173,13 @@ namespace HelloWorldApp
             // serializer.PropertyProvider.PropertiesToIgnore.Add(typeof(List<string>), "Capacity")
             settings.AdvancedSettings.PropertiesToIgnore.Add(typeof (List<string>), "Capacity");
 
-            
+
+            // PropertyTypesToIgnore
+            // Sometimes you want to ignore some types during the serialization.
+            // To ignore a type add these types to the list PropertyTypesToIgnore.
+            settings.AdvancedSettings.PropertyTypesToIgnore.Add(typeof(List<string>));
+
+
             // RootName
             // There is always a root element during serialization. Default name of this element is "Root", 
             // but you can change it to any other text.
@@ -271,6 +277,12 @@ namespace HelloWorldApp
             settings.AdvancedSettings.PropertiesToIgnore.Add(typeof(List<string>), "Capacity");
 
 
+            // PropertyTypesToIgnore
+            // Sometimes you want to ignore some types during the serialization.
+            // To ignore a type add these types to the list PropertyTypesToIgnore.
+            settings.AdvancedSettings.PropertyTypesToIgnore.Add(typeof(List<string>));
+
+
             // RootName
             // There is always a root element during the serialization. Default name of this element is "Root", 
             // but you can change it to any other text.
@@ -354,12 +366,12 @@ namespace HelloWorldApp
 
             var sharpSerializer = new SharpSerializer(serializer, deserializer);
 
-            
+
             // there is one more option you can alter directly on your instance of SharpSerializer
 
             // *************************************************************************************
             // PropertyProvider
-            // If the advanced setting PropertiesToIgnore are not enough there is possibility to create your own PropertyProvider
+            // If the advanced setting PropertiesToIgnore or PropertyTypesToIgnore are not enough there is possibility to create your own PropertyProvider
             // As a standard there are only properties serialized which:
             // - are public
             // - are not static
@@ -367,6 +379,7 @@ namespace HelloWorldApp
             // - have their set and get accessors
             // - are not indexers
             // - are not in PropertyProvider.PropertiesToIgnore
+            // - are not in PropertyProvider.PropertyTypesToIgnore
             // You can replace this functionality with an inheritor class of PropertyProvider
 
             sharpSerializer.PropertyProvider = new MyVerySophisticatedPropertyProvider();

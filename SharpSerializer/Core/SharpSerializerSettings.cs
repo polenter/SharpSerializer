@@ -111,6 +111,7 @@ namespace Polenter.Serialization.Core
     public class AdvancedSharpSerializerSettings
     {
         private PropertiesToIgnore _propertiesToIgnore;
+        private IList<Type> _propertyTypesToIgnore;
         private IList<Type> _attributesToIgnore;
 
         ///<summary>
@@ -138,6 +139,25 @@ namespace Polenter.Serialization.Core
                 return _propertiesToIgnore;
             }
             set { _propertiesToIgnore = value; }
+        }
+
+        /// <summary>
+        ///   Which properties should be ignored during the serialization.
+        /// </summary>
+        /// <remarks>
+        ///   In your business objects you can mark these properties with ExcludeFromSerializationAttribute
+        ///   In built in .NET Framework classes you can not do this. Therefore you define these properties here.
+        ///   I.e. System.Collections.Generic.List has property Capacity which is irrelevant for
+        ///   the whole Serialization and should be ignored.
+        /// </remarks>
+        public IList<Type> PropertyTypesToIgnore
+        {
+            get
+            {
+                if (_propertyTypesToIgnore == null) _propertyTypesToIgnore = new List<Type>();
+                return _propertyTypesToIgnore;
+            }
+            set { _propertyTypesToIgnore = value; }
         }
 
         /// <summary>
