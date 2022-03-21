@@ -42,6 +42,16 @@ namespace Polenter.Serialization
 
             [MyExcludeAttribute]
             public virtual Class2BeSerialized ComplexPrivateAttribute { get; set; }
+
+            public Class2BeIgnored IgnoredType { get; set; }
+        }
+
+        /// <summary>
+        /// Local testclass to be ignored
+        /// </summary>
+        public class Class2BeIgnored
+        {
+            public string Name { get; set; }
         }
 
         [TestMethod]
@@ -62,6 +72,10 @@ namespace Polenter.Serialization
                 ComplexSystemAttribute = child,
                 ComplexPrivateAttribute = child,
                 ComplexRule = child,
+                IgnoredType = new Class2BeIgnored
+                {
+                    Name = "Ignored"
+                }
             };
 
             /*
@@ -91,6 +105,8 @@ namespace Polenter.Serialization
             Assert.AreEqual(0, doc.SelectNodes("//Complex[@name='ComplexRule']").Count, "ComplexRule");
             Assert.AreEqual(0, doc.SelectNodes("//Complex[@name='ComplexSystemAttribute']").Count, "ComplexSystemAttribute");
             Assert.AreEqual(0, doc.SelectNodes("//Complex[@name='ComplexPrivateAttribute']").Count, "ComplexPrivateAttribute");
+
+            Assert.AreEqual(0, doc.SelectNodes("//Complex[@name='IgnoredType']").Count, "IgnoredType");
         }
 
         private static XmlDocument Save(object data)
@@ -100,6 +116,8 @@ namespace Polenter.Serialization
 
             settings.AdvancedSettings.PropertiesToIgnore.Add(typeof(Class2BeSerialized), "NameRule");
             settings.AdvancedSettings.PropertiesToIgnore.Add(typeof(Class2BeSerialized), "ComplexRule");
+
+            settings.AdvancedSettings.PropertyTypesToIgnore.Add(typeof(Class2BeIgnored));
 
             settings.AdvancedSettings.AttributesToIgnore.Add(typeof(MyExcludeAttribute));
             // this does not work
@@ -239,7 +257,85 @@ namespace Polenter.Serialization
             Assert.AreEqual(parent.Guid, loaded.Guid, "same guid");
         }
         #endregion
+        
+        #region Serial_DateTimeOffset with helpers
+        /// <summary>
+        /// Local testclass to be serialized
+        /// </summary>
+        public class ClassWithDateTimeOffset
+        {
+            public DateTimeOffset Date { get; set; }
+            public DateTime DateTimeLocal { get; set; }
+            public DateTime DateTimeUtc { get; set; }
+        }
 
+        [TestMethod]
+        public void XmlSerial_ShouldSerializeDateTimeOffset()
+        {
+            var parent = new ClassWithDateTimeOffset
+            {
+                Date = DateTimeOffset.Now,
+                DateTimeLocal = new DateTime(2021, 12, 11, 10, 9, 8, DateTimeKind.Local),
+                DateTimeUtc = new DateTime(2021, 12, 11, 10, 9, 8, DateTimeKind.Utc)
+            };
+
+            var stream = new MemoryStream();
+            var settings = new SharpSerializerXmlSettings();
+            var serializer = new SharpSerializer(settings);
+
+            serializer.Serialize(parent, stream);
+
+            stream.Position = 0;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(stream);
+            System.Console.WriteLine(doc.InnerXml);
+
+            serializer = new SharpSerializer(settings);
+            stream.Position = 0;
+            ClassWithDateTimeOffset loaded = serializer.Deserialize(stream) as ClassWithDateTimeOffset;
+
+            Assert.AreEqual(parent.Date, loaded.Date);
+
+            // Additional tests concerning
+            // https://github.com/polenter/SharpSerializer/issues/17#issuecomment-994484009
+            Assert.AreEqual(parent.DateTimeLocal, loaded.DateTimeLocal);
+            Assert.AreEqual(parent.DateTimeLocal.Kind, loaded.DateTimeLocal.Kind);
+            Assert.AreEqual(parent.DateTimeUtc, loaded.DateTimeUtc);
+            Assert.AreEqual(parent.DateTimeUtc.Kind, loaded.DateTimeUtc.Kind);
+        }
+
+        [TestMethod]
+        public void BinSerial_ShouldSerializeDateTimeOffset()
+        {
+            var parent = new ClassWithDateTimeOffset
+            {
+                Date = DateTimeOffset.Now,
+                DateTimeLocal = new DateTime(2021, 12, 11, 10, 9, 8, DateTimeKind.Local),
+                DateTimeUtc = new DateTime(2021, 12, 11, 10, 9, 8, DateTimeKind.Utc)
+            };
+
+            var stream = new MemoryStream();
+            var settings = new SharpSerializerBinarySettings(BinarySerializationMode.SizeOptimized);
+            var serializer = new SharpSerializer(settings);
+
+            serializer.Serialize(parent, stream);
+
+
+            serializer = new SharpSerializer(settings);
+            stream.Position = 0;
+            ClassWithDateTimeOffset loaded = serializer.Deserialize(stream) as ClassWithDateTimeOffset;
+
+            Assert.AreEqual(parent.Date, loaded.Date, "same date");
+            // Additional tests concerning
+            // https://github.com/polenter/SharpSerializer/issues/17#issuecomment-994484009
+            // DateTimeKind is not deserialized as expected.
+            // A suggested workaround is using DateTimeOffset or a complex object instead of DateTime.
+            Assert.AreEqual(parent.DateTimeLocal, loaded.DateTimeLocal);
+            Assert.AreEqual(DateTimeKind.Unspecified, loaded.DateTimeLocal.Kind);
+            Assert.AreEqual(parent.DateTimeUtc, loaded.DateTimeUtc);
+            Assert.AreEqual(DateTimeKind.Unspecified, loaded.DateTimeUtc.Kind);
+        }
+        #endregion
 
         #region BinSerial
         [TestMethod]

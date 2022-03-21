@@ -87,6 +87,11 @@ namespace Polenter.Serialization.Advanced
               return ((DateTime)value).ToString("O");
             }
 
+            if (value is DateTimeOffset)
+            {
+                return ((DateTimeOffset)value).ToString("O", _cultureInfo.DateTimeFormat);
+            }
+
             // Array of byte
             if (value.GetType() == typeof(byte[]))
             {
@@ -127,6 +132,7 @@ namespace Polenter.Serialization.Advanced
                 }
                     
                 if (type == typeof (DateTime)) return DateTime.Parse(text, _cultureInfo, DateTimeStyles.RoundtripKind);
+                if (type == typeof (DateTimeOffset)) return DateTimeOffset.Parse(text, _cultureInfo, DateTimeStyles.RoundtripKind);
                 if (type == typeof (Decimal)) return Convert.ToDecimal(text, _cultureInfo);
                 if (type == typeof (Double)) return Convert.ToDouble(text, _cultureInfo);
                 if (type == typeof (Int16)) return Convert.ToInt16(text, _cultureInfo);
@@ -142,7 +148,11 @@ namespace Polenter.Serialization.Advanced
 
                 if (type == typeof(Guid)) return new Guid(text);
                 // Enumeration
+#if NETSTANDARD1_0 || NETSTANDARD1_3
                 if (type.IsEnum()) return Enum.Parse(type, text, true);
+#else
+                if (type.IsEnum) return Enum.Parse(type, text, true);
+#endif
                 // Array of byte
                 if (type == typeof(byte[]))
                 {

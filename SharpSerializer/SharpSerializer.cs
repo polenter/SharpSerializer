@@ -163,6 +163,7 @@ namespace Polenter.Serialization
 
             // PropertiesToIgnore
             PropertyProvider.PropertiesToIgnore = settings.AdvancedSettings.PropertiesToIgnore;
+            PropertyProvider.PropertyTypesToIgnore = settings.AdvancedSettings.PropertyTypesToIgnore;
             PropertyProvider.AttributesToIgnore = settings.AdvancedSettings.AttributesToIgnore;
             //RootName
             RootName = settings.AdvancedSettings.RootName;
@@ -194,6 +195,7 @@ namespace Polenter.Serialization
 
             // PropertiesToIgnore
             PropertyProvider.PropertiesToIgnore = settings.AdvancedSettings.PropertiesToIgnore;
+            PropertyProvider.PropertyTypesToIgnore = settings.AdvancedSettings.PropertyTypesToIgnore;
             PropertyProvider.AttributesToIgnore = settings.AdvancedSettings.AttributesToIgnore;
 
             //RootName

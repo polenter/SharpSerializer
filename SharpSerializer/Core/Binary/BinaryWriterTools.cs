@@ -27,6 +27,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Polenter.Serialization.Core.Binary
@@ -154,6 +155,11 @@ namespace Polenter.Serialization.Core.Binary
                 writer.Write(((DateTime) value).Ticks);
                 return;
             }
+            if (type == typeof(DateTimeOffset))
+            {
+                writer.Write(((DateTimeOffset)value).ToString("O", DateTimeFormatInfo.InvariantInfo));
+                return;
+            }
             if (type == typeof(Guid))
             {
                 writer.Write(((Guid)value).ToByteArray());
@@ -217,7 +223,11 @@ namespace Polenter.Serialization.Core.Binary
             }
 
             // Enumeration
+#if NETSTANDARD1_0 || NETSTANDARD1_3
             if (type.IsEnum())
+#else
+            if (type.IsEnum)
+#endif
             {
                 writer.Write(Convert.ToInt32(value));
                 return;

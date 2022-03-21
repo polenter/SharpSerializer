@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="CorruptedSourceStreamTests.cs" />
     <Compile Include="HelloWorldTests.cs" />
+    <Compile Include="PrivateConstructorObjectDeserializationTests.cs" />
     <Compile Include="SerializationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializing\PropertyFactoryTests.cs" />
