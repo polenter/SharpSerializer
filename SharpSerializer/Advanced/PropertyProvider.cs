@@ -170,10 +170,6 @@ namespace Polenter.Serialization.Advanced
                 return true;
             }            
 
-            {
-                return true;
-            }
-
             if (ContainsExcludeFromSerializationAttribute(property))
             {
                 return true;

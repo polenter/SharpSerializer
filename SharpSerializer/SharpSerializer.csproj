@@ -1,60 +1,45 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard1.3;netcoreapp3.1;net452</TargetFrameworks>
-    <RootNamespace>Polenter.Serialization</RootNamespace>
-    <AssemblyName>Polenter.SharpSerializer</AssemblyName>
-    <PackageId>SharpSerializer</PackageId>
+    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>SharpSerializer</Title>
     <Version>3.0.2</Version>
     <Authors>Pawel Idzikowski</Authors>
-    <Description>SharpSerializer is an open source XML and binary serializer for .NET.
-With only one line of code it can serialize types like: multidimensional array, nested array, array-of-arrays, polymorphic object (where value is inherited from the property type), generic type, generic listing (i.e. dictionary, collection) and many more...</Description>
     <Company>Polenter - Software Solutions</Company>
-    <Product>SharpSerializer</Product>
-    <PackageIconUrl>http://www.sharpserializer.com/SharpSerializer032.png</PackageIconUrl>
-    <PackageTags>serializer binary serializer xml serializer xml serialize binary serialize xml serialize serialization binary serialization xml serialization repository isolated storage tombstoning xbox winrt</PackageTags>
-    <PackageReleaseNotes>The NuGet package is based on .NET Standard 1.0 and therefore the minimum system requirements are: .NET Core 1.0, .NET 4.5, Mono 4.6, Xamarin.iOS 10.0, Xamarin.Mac 3.0, Xamarin Android 7.0, UWP 10.0, WinRT 8.0, Windows Phone 8.1 and Windows Phone Silverlight 8.0 and above</PackageReleaseNotes>
-    <Copyright>Copyright ©  2010, Pawel Idzikowski</Copyright>
-    <ApplicationIcon>SharpSerializer.ico</ApplicationIcon>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>SharpSerializer is an open source XML and binary serializer for .NET.
+With only one line of code it can serialize types like: multidimensional array, nested array, array-of-arrays, polymorphic object (where value is inherited from the property type), generic type, generic listing (i.e. dictionary, collection) and many more.</Description>
+    <Copyright>© 2010, Pawel Idzikowski</Copyright>
     <PackageProjectUrl>https://github.com/polenter/SharpSerializer</PackageProjectUrl>
+    <PackageIcon>SharpSerializer128.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/polenter/SharpSerializer.git</RepositoryUrl>
+    <PackageTags>serialize;deserialize;serializer;binary;xml;tombstoning;xbox;winrt;isolaged storage</PackageTags>
+    <PackageReleaseNotes>Support for .NET Standard 2.0 and .NET Framework 4.6.2.</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseUrl>https://github.com/polenter/SharpSerializer/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <AssemblyName>Polenter.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Polenter.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <ApplicationIcon>..\SharpSerializer.ico</ApplicationIcon>
+    <PackageId>SharpSerializer</PackageId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.0|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_0</DefineConstants>
-    <DocumentationFile>bin\Debug\netstandard1.0\Polenter.SharpSerializer.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.0|AnyCPU'">
-    <DefineConstants>RELEASE;NETSTANDARD1_0</DefineConstants>
-    <DocumentationFile>bin\Release\netstandard1.0\Polenter.SharpSerializer.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_3</DefineConstants>
-    <DocumentationFile>bin\Debug\netstandard1.3\Polenter.SharpSerializer.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
-    <DefineConstants>RELEASE;NETSTANDARD1_3</DefineConstants>
-    <DocumentationFile>bin\Release\netstandard1.3\Polenter.SharpSerializer.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP3_1</DefineConstants>
-    <DocumentationFile>bin\Debug\netcoreapp3.1\Polenter.SharpSerializer.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
-    <DefineConstants>RELEASE;NETCOREAPP3_1</DefineConstants>
-    <DocumentationFile>bin\Release\netcoreapp3.1\Polenter.SharpSerializer.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NET452</DefineConstants>
-    <DocumentationFile>bin\Debug\net452\Polenter.SharpSerializer.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
-    <DefineConstants>RELEASE;NET452</DefineConstants>
-    <DocumentationFile>bin\Release\net452\Polenter.SharpSerializer.xml</DocumentationFile>    
-  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\SharpSerializer128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
 </Project>
