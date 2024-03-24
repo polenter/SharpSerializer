@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>SharpSerializer</Title>
-    <Version>3.0.2</Version>
+    <Version>4.0.2</Version>
     <Authors>Pawel Idzikowski</Authors>
     <Company>Polenter - Software Solutions</Company>
     <Description>SharpSerializer is an open source XML and binary serializer for .NET.
